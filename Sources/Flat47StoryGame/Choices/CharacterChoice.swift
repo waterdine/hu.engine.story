@@ -7,11 +7,13 @@
 
 import SpriteKit
 import GameplayKit
+import Flat47Game
 
 enum CatType {
 	case MCat, FCat, None
 }
 
+@available(iOS 10.0, *)
 class CharacterChoiceLogic: GameScene, UITextFieldDelegate {
 
 	var createArea: SKSpriteNode?

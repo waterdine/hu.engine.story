@@ -7,7 +7,9 @@
 
 import SpriteKit
 import GameplayKit
+import Flat47Game
 
+@available(iOS 10.0, *)
 class ChapterTransitionLogic: GameScene {
 	
 	class func newScene(gameLogic: GameLogic) -> ChapterTransitionLogic {

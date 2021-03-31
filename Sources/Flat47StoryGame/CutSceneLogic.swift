@@ -8,8 +8,10 @@
 import AVKit
 import SpriteKit
 import GameplayKit
+import Flat47Game
 
-class CutSceneLogic: GameScene {
+@available(iOS 11.0, *)
+open class CutSceneLogic: GameScene {
 	
 	var currentTextIndex: Int = 0
 	var lastTextChange: TimeInterval = 0.0
@@ -49,7 +51,7 @@ class CutSceneLogic: GameScene {
 		return scene
 	}
 	
-	override func didMove(to view: SKView) {
+	open override func didMove(to view: SKView) {
 		super.didMove(to: view)
 		if (self.childNode(withName: "//ShakeNode") == nil) {
 			shakeNode.name = "ShakeNode"
@@ -129,7 +131,7 @@ class CutSceneLogic: GameScene {
 		}
 	}
 	
-	override func update(_ currentTime: TimeInterval) {
+	open override func update(_ currentTime: TimeInterval) {
 		let delta = currentTime - lastTime
 		lastTime = currentTime
 		if (pauseFor > 0) {
@@ -267,13 +269,13 @@ class CutSceneLogic: GameScene {
 		}
 	}
 	
-	override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+	open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 		if (animatingText && !disableSpeedingText && !fadeFullText && !instantWordText && !waitfornext) {
 			speedingText = true
 		}
 	}
 	
-	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+	open override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
 		if (speedingText) {
 			speedingText = false
 		} else if (readyForNextAction(currentTime: event!.timestamp, delay: self.gameLogic!.actionDelay)) {

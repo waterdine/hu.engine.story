@@ -7,7 +7,9 @@
 
 import SpriteKit
 import GameplayKit
+import Flat47Game
 
+@available(iOS 10.0, *)
 class ChoiceLogic: GameScene {
 	
 	var choice1Node: SKSpriteNode?
