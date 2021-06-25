@@ -51,16 +51,18 @@ class StoryLogic: CutSceneLogic {
 			theme = "Theme1"
 		}
 		let textNode = shakeNode.childNode(withName: "//Text") as? SKLabelNode
-		let themeColor = textArea!.userData![theme as Any] as! String
-		if (themeColor == "White") {
-			textArea?.color = UIColor.white
-			textNode?.fontColor = UIColor.init(red: 0.0, green: 88.0 / 255.0, blue: 208.0 / 255.0, alpha: 1.0)
-		} else if (themeColor == "0058D0") {
-			textArea?.color = UIColor.init(red: 0.0, green: 88.0 / 255.0, blue: 208.0 / 255.0, alpha: 1.0)
-			textNode?.fontColor = UIColor.white
-		} else if (themeColor == "Black") {
-			textArea?.color = UIColor.black
-			textNode?.fontColor = UIColor.white
+		let themeColor = textArea?.userData?[theme as Any] as? String
+		if (themeColor != nil) {
+			if (themeColor! == "White") {
+				textArea?.color = UIColor.white
+				textNode?.fontColor = UIColor.init(red: 0.0, green: 88.0 / 255.0, blue: 208.0 / 255.0, alpha: 1.0)
+			} else if (themeColor! == "0058D0") {
+				textArea?.color = UIColor.init(red: 0.0, green: 88.0 / 255.0, blue: 208.0 / 255.0, alpha: 1.0)
+				textNode?.fontColor = UIColor.white
+			} else if (themeColor! == "Black") {
+				textArea?.color = UIColor.black
+				textNode?.fontColor = UIColor.white
+			}
 		}
 	}
 	
