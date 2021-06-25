@@ -40,7 +40,9 @@ class ChoiceLogic: GameScene {
 		let choice1Label = self.childNode(withName: "//Choice1Label") as? SKLabelNode
 		choice1Label!.text = Bundle.main.localizedString(forKey: (self.data?["Choice1Text"] as! String), value: nil, table: self.gameLogic!.getChapterTable())
 		choice1Label!.text = self.gameLogic!.unwrapVariables(text: choice1Label!.text!)
-		choice1Node?.size.height = max(choice3Node!.frame.height, choice1Label!.frame.height)
+		if (choice3Node != nil) {
+			choice1Node?.size.height = max(choice3Node!.frame.height, choice1Label!.frame.height)
+		}
 		choice1Node?.isHidden = (hideOnFlags == nil || hideOnFlags![0] == "" || !self.gameLogic!.flags.contains(hideOnFlags![0])) ? false : true
 		
 		let choice2Label = self.childNode(withName: "//Choice2Label") as? SKLabelNode
