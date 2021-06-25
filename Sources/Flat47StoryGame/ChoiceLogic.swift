@@ -97,8 +97,12 @@ class ChoiceLogic: GameScene {
 			if (variableToSet != nil && variables != nil) {
 				self.gameLogic?.variables[variableToSet!] = Bundle.main.localizedString(forKey: variables![1], value: nil, table: self.gameLogic!.getChapterTable())
 			}
-			let skipToSceneList = self.data?["SkipTo"] as! [Int]
-			self.gameLogic?.setScene(index: skipToSceneList[0])
+			let skipToSceneList = self.data?["SkipTo"] as? [Int]
+			if (skipToSceneList != nil) {
+				self.gameLogic?.setScene(index: skipToSceneList![0])
+			} else {
+				self.gameLogic?.setScene(index: self.data?["SkipTo"] as! Int)
+			}
 		} else if (!choice3Node!.isHidden && choice3Node!.frame.contains(point)) {
 			if (variableToSet != nil && variables != nil) {
 				self.gameLogic?.variables[variableToSet!] = Bundle.main.localizedString(forKey: variables![2], value: nil, table: self.gameLogic!.getChapterTable())
