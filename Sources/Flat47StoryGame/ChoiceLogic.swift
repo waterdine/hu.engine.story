@@ -54,7 +54,9 @@ class ChoiceLogic: GameScene {
 			choice2Label?.text = ""
 			choice2Node?.isHidden = true
 		}
-		choice2Node?.size.height = max(choice3Node!.frame.height, choice2Label!.frame.height)
+		if (choice3Node != nil) {
+			choice2Node?.size.height = max(choice3Node!.frame.height, choice2Label!.frame.height)
+		}
 		choice2Node?.position.y = (choice1Node?.position.y)! - (choice1Node?.frame.height)! * 1.2
 		
 		let choice3Label = self.childNode(withName: "//Choice3Label") as? SKLabelNode
