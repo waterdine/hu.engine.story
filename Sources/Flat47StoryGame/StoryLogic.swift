@@ -11,6 +11,8 @@ import Flat47Game
 @available(iOS 11.0, *)
 class StoryLogic: CutSceneLogic {
 	
+	var originalSpeakerY: CGFloat? = nil
+	
 	override class func newScene(gameLogic: GameLogic) -> StoryLogic {
 		guard let scene = StoryLogic(fileNamed: "Story" + gameLogic.getAspectSuffix()) else {
 			print("Failed to load Story.sks")
@@ -26,23 +28,64 @@ class StoryLogic: CutSceneLogic {
 	
 	override func didMove(to view: SKView) {
 		super.didMove(to: view)
+		let speakerRoyalLabel = shakeNode.childNode(withName: "//SpeakerRoyal") as! SKLabelNode
 		let speakerLabel = shakeNode.childNode(withName: "//Speaker") as! SKLabelNode
-		speakerLabel.text = self.data?["Speaker"] as? String
+		let isRoyalSpeaker: Bool? = self.data?["RoyalSpeaker"] as? Bool
+		if (isRoyalSpeaker != nil && isRoyalSpeaker!) {
+			speakerRoyalLabel.text = self.data?["Speaker"] as? String
+			speakerRoyalLabel.isHidden = false
+			speakerLabel.isHidden = true
+		} else {
+			speakerLabel.text = self.data?["Speaker"] as? String
+			speakerRoyalLabel.isHidden = true
+			speakerLabel.isHidden = false
+		}
 		
 		let speakerImageNode = shakeNode.childNode(withName: "//SpeakerImage") as? SKSpriteNode
 		let speakerImage: String? = self.data?["SpeakerImage"] as? String
 		if (speakerImage != nil) {
 			let speakerimagePath: String? = Bundle.main.path(forResource: speakerImage, ofType: ".png")
 			if (speakerimagePath != nil) {
+				let scale = speakerImageNode?.userData!["scale"] as! CGFloat
 				speakerImageNode?.isHidden = false
 				speakerImageNode?.texture = SKTexture(imageNamed: speakerimagePath!)
-				speakerImageNode?.size = CGSize(width: (speakerImageNode?.texture?.size())!.width * 0.2, height: (speakerImageNode?.texture?.size())!.height * 0.2)
+				speakerImageNode?.size = CGSize(width: (speakerImageNode?.texture?.size())!.width * scale, height: (speakerImageNode?.texture?.size())!.height * scale)
 				speakerImageNode?.alpha = 1.0
 			} else {
 				speakerImageNode?.isHidden = true
 			}
 		} else {
 			speakerImageNode?.isHidden = true
+		}
+		
+		if (originalSpeakerY != nil) {
+			speakerImageNode?.position.y = originalSpeakerY!
+			originalSpeakerY = nil
+		}
+		
+		let imageRotation = self.data?["Rotation"] as? Float
+		if (imageRotation != nil) {
+			speakerImageNode?.zRotation = CGFloat((Double(imageRotation!) / 180.0) * Double.pi)
+			originalSpeakerY = speakerImageNode?.position.y
+			speakerImageNode?.position.y = self.frame.maxY - (speakerImageNode?.size.height)! / 2.0
+		} else {
+			speakerImageNode?.zRotation = 0.0
+		}
+		
+		let textList: NSArray? = self.data?["Text"] as? NSArray
+		if (textList != nil && textList!.count > 0 && ((textList?[0] as! String) == "[enterleft]" || (textList?[0] as! String) == "[enterright]") ) {
+			speakerImageNode?.isHidden = true
+		}
+			
+		let storyImageNode = self.childNode(withName: "//StoryImage")
+		let disableOffset = storyImageNode?.userData?["disableOffset"] as? Bool
+		if (disableOffset == nil || disableOffset! == false) {
+			let imageOffset = self.data?["Offset"] as? Int
+			if (imageOffset != nil) {
+				storyImageNode?.position = CGPoint(x: CGFloat(imageOffset!) * storyImageNode!.xScale, y: 0)
+			} else {
+				storyImageNode?.position = CGPoint(x: 0, y: 0)
+			}
 		}
 		
 		let textArea = shakeNode.childNode(withName: "//TextArea") as? SKSpriteNode
@@ -75,15 +118,24 @@ class StoryLogic: CutSceneLogic {
 		super.processTextCommand(command: command)
 		let speakerImageNode = shakeNode.childNode(withName: "//SpeakerImage") as? SKSpriteNode
 		let textNode = shakeNode.childNode(withName: "//Text") as? SKLabelNode
+		var speakerAreaNode = shakeNode.childNode(withName: "//SpeakerArea") as? SKSpriteNode
+		
+		let isRoyalSpeaker: Bool? = self.data?["RoyalSpeaker"] as? Bool
+		if (isRoyalSpeaker != nil && isRoyalSpeaker!) {
+			speakerAreaNode = shakeNode.childNode(withName: "//SpeakerAreaRoyal") as? SKSpriteNode
+		}
+		
 		let halfWidth = (speakerImageNode?.frame.width)! / 2.0
 		if (command == "[jump]") {
 			speakerImageNode?.run(SKAction.sequence([SKAction.moveBy(x: 0.0, y: 20.0, duration: 0.2), SKAction.moveBy(x: 0.0, y: -10.0, duration: 0.1), SKAction.moveBy(x: 0.0, y: 20.0, duration: 0.2), SKAction.moveBy(x: 0.0, y: -10.0, duration: 0.1)]))
 		} else if (command == "[enterleft]") {
 			speakerImageNode?.position = CGPoint(x: self.frame.minX - halfWidth, y: (speakerImageNode?.position.y)!)
-			speakerImageNode?.run(SKAction.moveBy(x: (speakerImageNode?.frame.width)!, y: 0.0, duration: 0.7))
+			speakerImageNode?.run(SKAction.moveTo(x: (speakerAreaNode?.position.x)!, duration: 0.7))
+			speakerImageNode?.isHidden = false
 		} else if (command == "[enterright]") {
 			speakerImageNode?.position = CGPoint(x: self.frame.maxX + halfWidth, y: (speakerImageNode?.position.y)!)
-			speakerImageNode?.run(SKAction.moveBy(x: -(speakerImageNode?.frame.width)!, y: 0.0, duration: 0.7))
+			speakerImageNode?.run(SKAction.moveTo(x: (speakerAreaNode?.position.x)!, duration: 0.7))
+			speakerImageNode?.isHidden = false
 		} else if (command == "[fadeout]") {
 			speakerImageNode?.run(SKAction.fadeOut(withDuration: 0.7))
 			textNode?.run(SKAction.fadeOut(withDuration: 0.7))
