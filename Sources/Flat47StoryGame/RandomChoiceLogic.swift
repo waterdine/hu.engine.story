@@ -5,8 +5,25 @@
 //  Created by x414e54 on 17/06/2021.
 //
 
-import Foundation
+import AVKit
+import SpriteKit
+import Flat47Game
 
+@available(iOS 11.0, *)
+class RandomChoiceLogic: GameScene {
+	
+	class func newScene(gameLogic: GameLogic) -> ChoiceLogic {
+		guard let scene = ChoiceLogic(fileNamed: "Choice" + gameLogic.getAspectSuffix()) else {
+			print("Failed to load Choice.sks")
+			abort()
+		}
+
+		scene.scaleMode = .aspectFill
+		scene.gameLogic = gameLogic;
+		
+		return scene
+	}
+}
 
 /*switch
 case "RandomChoice":

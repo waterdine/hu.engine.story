@@ -9,8 +9,8 @@ import Foundation
 import Flat47Game
 
 // This is a free function because OOP sucks monkey ass and I am not perpetuating that BS any longer ^_^/
-@available(iOS 10.0, *)
-func RegisterStoryGameScenes(gameLogic: GameLogic) {
+@available(iOS 11.0, *)
+public func RegisterStoryGameScenes(gameLogic: GameLogic) {
 	//RegisterGameLogicScenes()
 	gameLogic.sceneTypes["Choice"] = ChoiceLogic.newScene(gameLogic: gameLogic)
 	gameLogic.sceneTypes["RandomChoice"] = RandomChoiceLogic.newScene(gameLogic: gameLogic)

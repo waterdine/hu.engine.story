@@ -12,7 +12,7 @@ enum CatType {
 	case MCat, FCat, None
 }
 
-@available(iOS 10.0, *)
+@available(iOS 11.0, *)
 class CharacterChoiceLogic: GameScene, UITextFieldDelegate {
 
 	var createArea: SKSpriteNode?
