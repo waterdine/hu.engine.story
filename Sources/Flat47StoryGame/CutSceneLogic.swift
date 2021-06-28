@@ -9,6 +9,7 @@ import AVKit
 import SpriteKit
 import Flat47Game
 
+@available(OSX 10.12, *)
 @available(iOS 11.0, *)
 open class CutSceneLogic: GameScene {
 	

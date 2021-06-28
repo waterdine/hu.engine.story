@@ -12,6 +12,7 @@ enum CatType {
 	case MCat, FCat, None
 }
 
+@available(OSX 10.12, *)
 @available(iOS 11.0, *)
 class CharacterChoiceLogic: GameScene, UITextFieldDelegate {
 
