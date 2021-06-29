@@ -9,7 +9,12 @@ import AVKit
 import SpriteKit
 import Flat47Game
 
-@available(OSX 10.12, *)
+#if os(OSX)
+typealias UIColor = NSColor
+typealias UIFont = NSFont
+#endif
+
+@available(OSX 10.13, *)
 @available(iOS 11.0, *)
 open class CutSceneLogic: GameScene {
 	
@@ -38,6 +43,18 @@ open class CutSceneLogic: GameScene {
 	var pauseFor: Double = 0.0
 	var lastTime: Double = 0.0
 	var queuedSound: String = ""
+	var queuedBlackCover: Bool = false
+	
+	var currentOffset: CGSize = CGSize(width: 0.0, height: 0.0)
+	var wantedOffset: CGSize = CGSize(width: 0.0, height: 0.0)
+	var currentScale: Float = 1.0
+	var wantedScale: Float = 1.0
+	
+	var subSceneNode: SKNode = SKNode()
+	var currentSubScene: String = ""
+	
+	var maskTexture1: SKTexture? = nil
+	var maskTexture2: SKTexture? = nil
 	
 	class func newScene(gameLogic: GameLogic) -> CutSceneLogic {
 		guard let scene = CutSceneLogic(fileNamed: "CutScene" + gameLogic.getAspectSuffix()) else {
@@ -78,6 +95,15 @@ open class CutSceneLogic: GameScene {
 		centerText = false
 		pauseFor = 0.0
 		
+		var imageMaskPath = Bundle.main.path(forResource: "ImageMask", ofType: ".png")
+		if (imageMaskPath != nil) {
+			maskTexture1 = SKTexture(imageNamed: imageMaskPath!)
+		}
+		imageMaskPath = Bundle.main.path(forResource: "ImageMask3", ofType: ".png")
+		if (imageMaskPath != nil) {
+			maskTexture2 = SKTexture(imageNamed: imageMaskPath!)
+		}
+		
 		let storyImage = shakeNode.childNode(withName: "//StoryImage") as? SKSpriteNode
 		let image: String = self.data?["Image"] as! String
 		let imagePath = Bundle.main.path(forResource: image, ofType: ".png")
@@ -86,6 +112,68 @@ open class CutSceneLogic: GameScene {
 			storyImage?.texture = SKTexture(imageNamed: imagePath!)
 		} else {
 			storyImage?.isHidden = true
+		}
+		
+		let imageScale = self.data?["Scale"] as? String
+		var imageScaleFloat: Float? = nil
+		if (imageScale != nil) {
+			imageScaleFloat = Float.init(imageScale!)!
+		}
+		if (imageScaleFloat != nil) {
+			wantedScale = imageScaleFloat!
+			currentScale = imageScaleFloat!
+		} else {
+			wantedScale = 1.0
+			currentScale = 1.0
+		}
+		
+		currentOffset = CGSize(width: 0.0, height: 0.0)
+		let imageOffsetX = self.data?["OffsetX"] as? String
+		let imageOffsetY = self.data?["OffsetY"] as? String
+		var imageOffsetXFloat: Float? = nil
+		if (imageOffsetX != nil) {
+			imageOffsetXFloat = Float.init(imageOffsetX!)
+		}
+		var imageOffsetYFloat: Float? = nil
+		if (imageOffsetY != nil) {
+			imageOffsetYFloat = Float.init(imageOffsetY!)
+		}
+		
+		if (imageOffsetXFloat != nil) {
+			currentOffset.width = CGFloat(imageOffsetXFloat!)
+		}
+		if (imageOffsetYFloat != nil) {
+			currentOffset.height = CGFloat(imageOffsetYFloat!)
+		}
+		
+		wantedOffset = currentOffset
+		
+		let imageRotation = self.data?["Rotation"] as? Float
+		if (imageRotation != nil) {
+			storyImage?.shader?.uniformNamed("u_flip")?.floatValue = 1.0
+		} else {
+			storyImage?.shader?.uniformNamed("u_flip")?.floatValue = 0.0
+		}
+		
+		storyImage?.shader?.uniformNamed("u_offset_x")?.floatValue = Float(currentOffset.width)
+		storyImage?.shader?.uniformNamed("u_offset_y")?.floatValue = Float(currentOffset.height)
+		storyImage?.shader?.uniformNamed("u_scale")?.floatValue = currentScale
+		storyImage?.shader?.uniformNamed("u_maskTexture")?.textureValue = maskTexture1
+		
+		let storyScene: String? = self.data?["SubScene"] as? String
+		if (storyScene != nil) {
+			if (storyScene! != currentSubScene) {
+				currentSubScene = storyScene!
+				storyImage?.removeAllChildren()
+				let subScene = SKNode(fileNamed: storyScene!)
+				subSceneNode = (subScene?.childNode(withName: "//Root"))!
+				subScene?.removeAllChildren()
+				storyImage?.addChild(subSceneNode)
+			}
+			subSceneNode.isPaused = false
+		} else {
+			storyImage?.removeAllChildren()
+			currentSubScene = ""
 		}
 		
 		let textList: NSArray? = self.data?["Text"] as? NSArray
@@ -129,11 +217,79 @@ open class CutSceneLogic: GameScene {
 		if (flag != nil) {
 			self.gameLogic?.flags.append(flag!)
 		}
+		enablePrevSceneIndicator()
 	}
 	
 	open override func update(_ currentTime: TimeInterval) {
-		let delta = currentTime - lastTime
+		var delta = currentTime - lastTime
+		if (lastTime == 0) {
+			delta = 0
+		}
 		lastTime = currentTime
+		
+		let storyImageNode = self.childNode(withName: "//StoryImage") as? SKSpriteNode
+		
+		if (wantedScale != currentScale) {
+			if (wantedScale < currentScale) {
+				currentScale -= Float(delta / 10.0)
+				if (currentScale < 0.0) {
+					currentScale = wantedScale
+				}
+				if (currentScale < wantedScale) {
+					currentScale = wantedScale
+				}
+			} else if (wantedScale > currentScale) {
+				currentScale += Float(delta / 10.0)
+				if (currentScale > 1.0) {
+					currentScale = wantedScale
+				}
+				if (currentScale > wantedScale) {
+					currentScale = wantedScale
+				}
+			}
+			storyImageNode?.shader?.uniformNamed("u_scale")?.floatValue = currentScale
+		}
+		
+		if (wantedOffset != currentOffset) {
+			if (wantedOffset.width < currentOffset.width) {
+				currentOffset.width -= CGFloat(delta / 10.0)
+				if (currentOffset.width < 0.0) {
+					currentOffset.width = wantedOffset.width
+				}
+				if (currentOffset.width < wantedOffset.width) {
+					currentOffset.width = wantedOffset.width
+				}
+			} else if (wantedOffset.width > currentOffset.width) {
+				currentOffset.width += CGFloat(delta / 10.0)
+				if (currentOffset.width > 1.0) {
+					currentOffset.width = wantedOffset.width
+				}
+				if (currentOffset.width > wantedOffset.width) {
+					currentOffset.width = wantedOffset.width
+				}
+			}
+			
+			if (wantedOffset.height < currentOffset.height) {
+				currentOffset.height -= CGFloat(delta / 10.0)
+				if (currentOffset.height < 0.0) {
+					currentOffset.height = wantedOffset.height
+				}
+				if (currentOffset.height < wantedOffset.height) {
+					currentOffset.height = wantedOffset.height
+				}
+			} else if (wantedOffset.height > currentOffset.height) {
+				currentOffset.height += CGFloat(delta / 10.0)
+				if (currentOffset.height > 1.0) {
+					currentOffset.height = wantedOffset.height
+				}
+				if (currentOffset.height > wantedOffset.height) {
+					currentOffset.height = wantedOffset.height
+				}
+			}
+			storyImageNode?.shader?.uniformNamed("u_offset_x")?.floatValue = Float(currentOffset.width)
+			storyImageNode?.shader?.uniformNamed("u_offset_y")?.floatValue = Float(currentOffset.height)
+		}
+		
 		if (pauseFor > 0) {
 			pauseFor -= delta
 			return
@@ -223,7 +379,7 @@ open class CutSceneLogic: GameScene {
 						var characterIndex: String.Index = newText.startIndex
 						newText.formIndex(&characterIndex, offsetBy: index)
 						let character = newText[characterIndex]
-						if (character == ",") {
+						if (character == "," || character == ";") {
 							fakeIndex += 5
 						} else {
 							fakeIndex += 1
@@ -269,16 +425,39 @@ open class CutSceneLogic: GameScene {
 		}
 	}
 	
-	open override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+	open override func interactionBegan(_ point: CGPoint, timestamp: TimeInterval){
+		// TODO add super call with bool!
+		if (gameMenu?.isHidden == false) {
+			gameMenu?.interactionBegan(point, timestamp: timestamp)
+			return
+		}
+		
 		if (animatingText && !disableSpeedingText && !fadeFullText && !instantWordText && !waitfornext) {
 			speedingText = true
 		}
 	}
 	
-	open override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-		if (speedingText) {
+	open override func interactionEnded(_ point: CGPoint, timestamp: TimeInterval) {
+		if (super.handleToolbar(point)) {
+			return
+		}
+		
+		if (gameMenu?.isHidden == false) {
+			gameMenu?.interactionEnded(point, timestamp: timestamp)
+			return
+		}
+
+		if (!prevSceneNode!.isHidden && prevSceneNode!.frame.contains(point)) {
+			self.gameLogic?.prevScene()
+		} else if (readyForNextScene) {
+			if (nextSceneNode!.frame.contains(point)) {
+				self.gameLogic?.nextScene()
+			} else if (prevSceneNode!.frame.contains(point)) {
+				self.gameLogic?.nextScene()
+			}
+		} else if (speedingText) {
 			speedingText = false
-		} else if (readyForNextAction(currentTime: event!.timestamp, delay: self.gameLogic!.actionDelay)) {
+		} else if (readyForNextAction(currentTime: timestamp, delay: self.gameLogic!.actionDelay)) {
 			if (waitfornext) {
 				waitfornext = false
 				animatingText = true
@@ -286,6 +465,12 @@ open class CutSceneLogic: GameScene {
 				if (queuedSound != "") {
 					self.run(SKAction.playSoundFileNamed(queuedSound, waitForCompletion: false))
 					queuedSound = ""
+				}
+				if (queuedBlackCover) {
+					let cover = shakeNode.childNode(withName: "//Cover") as? SKSpriteNode
+					cover?.run(SKAction.fadeIn(withDuration: 0.2))
+					cover?.color = self.backgroundColor
+					queuedBlackCover = false
 				}
 			} else if (hasMoreText()) {
 				nextText()
@@ -316,7 +501,7 @@ open class CutSceneLogic: GameScene {
 				var characterIndex: String.Index = newText.startIndex
 				newText.formIndex(&characterIndex, offsetBy: index)
 				let character = newText[characterIndex]
-				if (character == ",") {
+				if (character == "," || character == ";") {
 					fakeIndex += 5
 				} else {
 					fakeIndex += 1
@@ -386,6 +571,24 @@ open class CutSceneLogic: GameScene {
 			instantWordText = true
 		} else if (command == "[camerashake]") {
 			applyShake = true
+		} else if (command.starts(with: "[panto:")) {
+			var pos = command.replacingOccurrences(of: "[panto:", with: "")
+			pos = pos.trimmingCharacters(in: ["]"])
+			let parts: [Substring] = pos.split(separator: ",")
+			if (parts.count == 1) {
+				let offset = Float.init(parts[0])
+				wantedOffset.width = CGFloat(offset!)
+				wantedOffset.height = CGFloat(offset!)
+			} else if (parts.count == 2) {
+				let offsetX = Float.init(parts[0])
+				let offsetY = Float.init(parts[1])
+				wantedOffset.width = CGFloat(offsetX!)
+				wantedOffset.height = CGFloat(offsetY!)
+			}
+		} else if (command.starts(with: "[zoom:")) {
+			var scale = command.replacingOccurrences(of: "[zoom:", with: "")
+			scale = scale.trimmingCharacters(in: ["]"])
+			wantedScale = Float.init(scale)!
 		} else if (command.starts(with: "[sound:")) {
 			var file = command.replacingOccurrences(of: "[sound:", with: "")
 			file = file.trimmingCharacters(in: ["]"])
@@ -419,10 +622,16 @@ open class CutSceneLogic: GameScene {
 		} else if (command.starts(with: "[fadecover]")) {
 			let cover = shakeNode.childNode(withName: "//Cover") as? SKSpriteNode
 			cover?.run(SKAction.fadeOut(withDuration: 1.0))
-		} else if (command.starts(with: "[fadeblack]")) {
+		} else if (command.starts(with: "[hidecover]")) {
 			let cover = shakeNode.childNode(withName: "//Cover") as? SKSpriteNode
-			cover?.run(SKAction.fadeIn(withDuration: 0.3))
-			cover?.color = self.backgroundColor
+			cover?.alpha = 0.0
+			let textLabel = shakeNode.childNode(withName: "//Text") as? SKLabelNode
+			textLabel?.fontColor = fontColor
+		} else if (command.starts(with: "[changemask]")) {
+			let storyImage = shakeNode.childNode(withName: "//StoryImage") as? SKSpriteNode
+			storyImage?.shader?.uniformNamed("u_maskTexture")?.textureValue = maskTexture2
+		} else if (command.starts(with: "[blackcover]")) {
+			queuedBlackCover = true
 			let textLabel = shakeNode.childNode(withName: "//Text") as? SKLabelNode
 			fontColor = textLabel?.fontColor
 			textLabel?.fontColor = UIColor.lightGray
@@ -452,6 +661,8 @@ open class CutSceneLogic: GameScene {
 	}
 	
 	func nextText() {
+		disablePrevSceneIndicator()
+		
 		currentTextIndex += 1
 
 		if (stickyText) {

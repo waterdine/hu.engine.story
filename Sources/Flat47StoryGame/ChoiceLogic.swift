@@ -81,8 +81,7 @@ class ChoiceLogic: GameScene {
 		}
 	}
 	
-	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-		let point: CGPoint = (touches.first?.location(in: self))!
+	override func interactionEnded(_ point: CGPoint, timestamp: TimeInterval) {
 		let flag: String? = self.data?["Flag"] as? String
 		let variableToSet = self.data?["VariableToSet"] as? String
 		let variables = self.data?["Variables"] as? [String]
