@@ -21,8 +21,9 @@ class StoryLogic: CutSceneLogic {
 		}
  
 		scene.scaleMode = .aspectFill
-		scene.gameLogic = gameLogic;
-		scene.stickyText = false;
+		scene.gameLogic = gameLogic
+		scene.stickyText = false
+		scene.requiresMusic = true
 		
 		return scene
 	}

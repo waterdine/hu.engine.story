@@ -63,7 +63,8 @@ open class CutSceneLogic: GameScene {
 		}
 
 		scene.scaleMode = .aspectFill
-		scene.gameLogic = gameLogic;
+		scene.gameLogic = gameLogic
+		scene.requiresMusic = true
 		
 		return scene
 	}

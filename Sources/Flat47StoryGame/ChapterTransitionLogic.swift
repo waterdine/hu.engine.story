@@ -20,6 +20,7 @@ class ChapterTransitionLogic: GameScene {
 
 		scene.scaleMode = .aspectFill
 		scene.gameLogic = gameLogic
+		scene.defaultTransition = true
 		
 		return scene
 	}
