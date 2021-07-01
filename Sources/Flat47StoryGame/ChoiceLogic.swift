@@ -95,6 +95,15 @@ class ChoiceLogic: GameScene {
 	}
 	
 	override func interactionEnded(_ point: CGPoint, timestamp: TimeInterval) {
+		if (super.handleToolbar(point)) {
+			return
+		}
+	   
+		if (gameMenu?.isHidden == false) {
+			gameMenu?.interactionEnded(point, timestamp: timestamp)
+			return
+		}
+		
 		let flag: String? = self.data?["Flag"] as? String
 		let variableToSet = self.data?["VariableToSet"] as? String
 		let variables = self.data?["Variables"] as? [String]
