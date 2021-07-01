@@ -37,7 +37,6 @@ open class CutSceneLogic: GameScene {
 	var readyForNextScene: Bool = false
 	var waitfornext: Bool = false
 	var centerText: Bool = false
-	var blackCover: Bool = false
 	var skipIndent: Bool = false
 	var shakeNode: SKNode = SKNode()
 	var pauseFor: Double = 0.0
@@ -97,7 +96,6 @@ open class CutSceneLogic: GameScene {
 		readyForNextScene = false
 		waitfornext = false
 		centerText = false
-		blackCover = false
 		pauseFor = 0.0
 		
 		var imageMaskPath = Bundle.main.path(forResource: "ImageMask", ofType: ".png")
@@ -192,18 +190,17 @@ open class CutSceneLogic: GameScene {
 		let cover = shakeNode.childNode(withName: "//Cover") as? SKSpriteNode
 		cover?.alpha = 0.0
 		coverTextLabel?.alpha = 0.0
-		coverTextLabel?.isHidden = true
 		if (transitionType != nil) {
 			if (transitionType == "Flash") {
 				let cover = shakeNode.childNode(withName: "//Cover") as? SKSpriteNode
 				cover?.alpha = 1.0
 				cover?.color = UIColor.white
+				textLabel?.alpha = 1.0
 			} else if (transitionType == "FadeBlack") {
 				cover?.alpha = 1.0
 				cover?.color = self.backgroundColor
-				blackCover = true
 				coverTextLabel?.alpha = 1.0
-				coverTextLabel?.isHidden = true
+				textLabel?.alpha = 0.0
 			}
 		}
 		let disableSpeedText: Bool? = self.data?["DisableSpeedText"] as? Bool
@@ -328,15 +325,23 @@ open class CutSceneLogic: GameScene {
 			let mainAttributes: [NSAttributedString.Key : Any] = [.font : font as Any, .foregroundColor : textLabel?.fontColor as Any]
 			let string: NSMutableAttributedString = NSMutableAttributedString(string: fixedText, attributes: mainAttributes)
 			
+			let coverMainColor = coverTextLabel != nil ? (coverTextLabel?.fontColor!.cgColor.components)! : mainColor
+			let coverMainAttributes: [NSAttributedString.Key : Any] = [.font : font as Any, .foregroundColor : coverTextLabel?.fontColor as Any]
+			let coverString: NSMutableAttributedString = NSMutableAttributedString(string: fixedText, attributes: coverMainAttributes)
+			
 			var remainingCharacters = newText.count
 			if (remainingCharacters > 0) {
 				if (fadeFullText) {
 					let fadingCharacterAlpha = (delta >= 1.0) ? 1.0 : delta
 					let color = UIColor.init(red: mainColor[0], green: mainColor[1], blue: mainColor[2], alpha: CGFloat(fadingCharacterAlpha))
+					let coverColor = UIColor.init(red: coverMainColor[0], green: coverMainColor[1], blue: coverMainColor[2], alpha: CGFloat(fadingCharacterAlpha))
 
 					let attributes: [NSAttributedString.Key : Any] = [.font : font as Any, .foregroundColor : color]
 					let attributedCharacterString: NSAttributedString = NSAttributedString(string: newText, attributes: attributes)
 					string.append(attributedCharacterString)
+					let coverAttributes: [NSAttributedString.Key : Any] = [.font : font as Any, .foregroundColor : coverColor]
+					let coverAttributedCharacterString: NSAttributedString = NSAttributedString(string: newText, attributes: coverAttributes)
+					coverString.append(coverAttributedCharacterString)
 					if (fadingCharacterAlpha == 1.0) {
 						remainingCharacters = 0
 					}
@@ -351,8 +356,10 @@ open class CutSceneLogic: GameScene {
 						let indexFadeStartTime = Double(fakeIndex) * textFadeTime
 						let characterAlpha = (delta >= indexFadeStartTime + textFadeTime) ? 1.0 : (delta < indexFadeStartTime) ? 0.0 : fadingCharacterAlpha
 						let color = UIColor.init(red: mainColor[0], green: mainColor[1], blue: mainColor[2], alpha: CGFloat(characterAlpha))
+						let coverColor = UIColor.init(red: coverMainColor[0], green: coverMainColor[1], blue: coverMainColor[2], alpha: CGFloat(characterAlpha))
 						
 						let attributes: [NSAttributedString.Key : Any] = [.font : font as Any, .foregroundColor : color]
+						let coverAttributes: [NSAttributedString.Key : Any] = [.font : font as Any, .foregroundColor : coverColor]
 						var characterIndex: String.Index = newText.startIndex
 						newText.formIndex(&characterIndex, offsetBy: index)
 						let character = newText[characterIndex]
@@ -361,6 +368,8 @@ open class CutSceneLogic: GameScene {
 						}
 						let attributedCharacterString: NSAttributedString = NSAttributedString(string: String(character), attributes: attributes)
 						string.append(attributedCharacterString)
+						let coverAttributedCharacterString: NSAttributedString = NSAttributedString(string: String(character), attributes: coverAttributes)
+						coverString.append(coverAttributedCharacterString)
 						
 						if (characterAlpha == 1.0) {
 							remainingCharacters -= 1
@@ -376,8 +385,10 @@ open class CutSceneLogic: GameScene {
 						let indexFadeStartTime = Double(fakeIndex) * textFadeTime
 						let characterAlpha = (delta >= indexFadeStartTime + textFadeTime) ? 1.0 : (delta < indexFadeStartTime) ? 0.0 : fadingCharacterAlpha
 						let color = UIColor.init(red: mainColor[0], green: mainColor[1], blue: mainColor[2], alpha: CGFloat(characterAlpha))
+						let coverColor = UIColor.init(red: coverMainColor[0], green: coverMainColor[1], blue: coverMainColor[2], alpha: CGFloat(characterAlpha))
 						
 						let attributes: [NSAttributedString.Key : Any] = [.font : font as Any, .foregroundColor : color]
+						let coverAttributes: [NSAttributedString.Key : Any] = [.font : font as Any, .foregroundColor : coverColor]
 						var characterIndex: String.Index = newText.startIndex
 						newText.formIndex(&characterIndex, offsetBy: index)
 						let character = newText[characterIndex]
@@ -388,6 +399,8 @@ open class CutSceneLogic: GameScene {
 						}
 						let attributedCharacterString: NSAttributedString = NSAttributedString(string: String(character), attributes: attributes)
 						string.append(attributedCharacterString)
+						let coverAttributedCharacterString: NSAttributedString = NSAttributedString(string: String(character), attributes: coverAttributes)
+						coverString.append(coverAttributedCharacterString)
 						
 						if (characterAlpha == 1.0) {
 							remainingCharacters -= 1
@@ -401,16 +414,11 @@ open class CutSceneLogic: GameScene {
 				coverTextLabel?.isHidden = true
 				centerTextLabel?.isHidden = false
 				centerTextLabel?.attributedText = string
-			} else if (blackCover && coverTextLabel != nil) {
+			} else {
 				centerTextLabel?.isHidden = true
 				textLabel?.isHidden = false
 				coverTextLabel?.isHidden = false
-				coverTextLabel?.attributedText = string
-				textLabel?.attributedText = string
-			} else {
-				centerTextLabel?.isHidden = true
-				coverTextLabel?.isHidden = true
-				textLabel?.isHidden = false
+				coverTextLabel?.attributedText = coverString
 				textLabel?.attributedText = string
 			}
 			
@@ -482,11 +490,12 @@ open class CutSceneLogic: GameScene {
 					cover?.color = self.backgroundColor
 					let textLabel = shakeNode.childNode(withName: "//Text") as? SKLabelNode
 					textLabel?.run(SKAction.fadeOut(withDuration: 0.2))
+					textLabel?.alpha = 1.0
 					let coverTextLabel = shakeNode.childNode(withName: "//CoverText") as? SKLabelNode
 					coverTextLabel?.removeAllActions()
+					coverTextLabel?.alpha = 0.0
 					coverTextLabel?.run(SKAction.fadeIn(withDuration: 0.2))
 					queuedBlackCover = false
-					blackCover = true
 				}
 			} else if (hasMoreText()) {
 				nextText()
@@ -569,7 +578,6 @@ open class CutSceneLogic: GameScene {
 		applyShake = false
 		waitfornext = false
 		centerText = false
-		blackCover = false
 		skipIndent = false
 		disableNextSceneIndicator()
 	}
@@ -641,10 +649,8 @@ open class CutSceneLogic: GameScene {
 			cover?.run(SKAction.fadeOut(withDuration: 1.0))
 			let textLabel = shakeNode.childNode(withName: "//Text") as? SKLabelNode
 			textLabel?.run(SKAction.fadeIn(withDuration: 1.0))
-			if (blackCover) {
-				let coverTextLabel = shakeNode.childNode(withName: "//CoverText") as? SKLabelNode
-				coverTextLabel?.run(SKAction.fadeOut(withDuration: 1.0), completion: { [self] in blackCover = false })
-			}
+			let coverTextLabel = shakeNode.childNode(withName: "//CoverText") as? SKLabelNode
+			coverTextLabel?.run(SKAction.fadeOut(withDuration: 1.0))
 		} else if (command.starts(with: "[hidecover]")) {
 			let cover = shakeNode.childNode(withName: "//Cover") as? SKSpriteNode
 			cover?.alpha = 0.0
@@ -652,12 +658,24 @@ open class CutSceneLogic: GameScene {
 			textLabel?.alpha = 1.0
 			let coverTextLabel = shakeNode.childNode(withName: "//CoverText") as? SKLabelNode
 			coverTextLabel?.alpha = 0.0
-			blackCover = false
 		} else if (command.starts(with: "[changemask]")) {
 			let storyImage = shakeNode.childNode(withName: "//StoryImage") as? SKSpriteNode
 			storyImage?.shader?.uniformNamed("u_maskTexture")?.textureValue = maskTexture2
 		} else if (command.starts(with: "[blackcover]")) {
-			queuedBlackCover = true
+			if (waitfornext) {
+				queuedBlackCover = true
+			} else {
+				let cover = shakeNode.childNode(withName: "//Cover") as? SKSpriteNode
+				cover?.run(SKAction.fadeIn(withDuration: 0.2))
+				cover?.color = self.backgroundColor
+				let textLabel = shakeNode.childNode(withName: "//Text") as? SKLabelNode
+				textLabel?.run(SKAction.fadeOut(withDuration: 0.2))
+				textLabel?.alpha = 1.0
+				let coverTextLabel = shakeNode.childNode(withName: "//CoverText") as? SKLabelNode
+				coverTextLabel?.removeAllActions()
+				coverTextLabel?.alpha = 0.0
+				coverTextLabel?.run(SKAction.fadeIn(withDuration: 0.2))
+			}
 		} else if (command == "[pause]") {
 			pauseFor = 1.0
 		} else if (command == "[longpause]") {
