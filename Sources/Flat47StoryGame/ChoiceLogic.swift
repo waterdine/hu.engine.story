@@ -38,7 +38,9 @@ class ChoiceLogic: GameScene {
 		choice4Node = self.childNode(withName: "//Choice4") as? SKSpriteNode
 		
 		let hideOnFlags = self.data?["HideOnFlag"] as? [String]
-		
+		let directionLabel = self.childNode(withName: "//DirectingLabel") as? SKLabelNode
+		directionLabel!.text = Bundle.main.localizedString(forKey: (self.data?["DirectingText"] as! String), value: nil, table: self.gameLogic!.getChapterTable())
+				
 		let choice1Label = self.childNode(withName: "//Choice1Label") as? SKLabelNode
 		choice1Label!.text = Bundle.main.localizedString(forKey: (self.data?["Choice1Text"] as! String), value: nil, table: self.gameLogic!.getChapterTable())
 		choice1Label!.text = self.gameLogic!.unwrapVariables(text: choice1Label!.text!)
@@ -58,8 +60,8 @@ class ChoiceLogic: GameScene {
 		}
 		if (choice3Node != nil) {
 			choice2Node?.size.height = max(choice3Node!.frame.height, choice2Label!.frame.height)
+			choice2Node?.position.y = (choice1Node?.position.y)! - (choice1Node?.frame.height)! * 1.2
 		}
-		choice2Node?.position.y = (choice1Node?.position.y)! - (choice1Node?.frame.height)! * 1.2
 		
 		let choice3Label = self.childNode(withName: "//Choice3Label") as? SKLabelNode
 		if (self.data?["Choice3Text"] != nil) {
@@ -80,13 +82,23 @@ class ChoiceLogic: GameScene {
 			choice4Label?.text = ""
 			choice4Node?.isHidden = true
 		}
+		
+		let storyImage = self.childNode(withName: "//StoryImage") as? SKSpriteNode
+		let image: String = self.data?["Image"] as! String
+		let imagePath = Bundle.main.path(forResource: image, ofType: ".png")
+		if (imagePath != nil) {
+			storyImage?.isHidden = false
+			storyImage?.texture = SKTexture(imageNamed: imagePath!)
+		} else {
+			storyImage?.isHidden = true
+		}
 	}
 	
 	override func interactionEnded(_ point: CGPoint, timestamp: TimeInterval) {
 		let flag: String? = self.data?["Flag"] as? String
 		let variableToSet = self.data?["VariableToSet"] as? String
 		let variables = self.data?["Variables"] as? [String]
-		if (!choice1Node!.isHidden && choice1Node!.frame.contains(point)) {
+		if (choice1Node != nil && !choice1Node!.isHidden && choice1Node!.frame.contains(point)) {
 			if (variableToSet != nil && variables != nil) {
 				self.gameLogic?.variables[variableToSet!] = Bundle.main.localizedString(forKey: variables![0], value: nil, table: self.gameLogic!.getChapterTable())
 			}
@@ -94,7 +106,7 @@ class ChoiceLogic: GameScene {
 			if (flag != nil) {
 				self.gameLogic?.flags.append(flag!)
 			}
-		} else if (!choice2Node!.isHidden && choice2Node!.frame.contains(point)) {
+		} else if (choice2Node != nil && !choice2Node!.isHidden && choice2Node!.frame.contains(point)) {
 			if (variableToSet != nil && variables != nil) {
 				self.gameLogic?.variables[variableToSet!] = Bundle.main.localizedString(forKey: variables![1], value: nil, table: self.gameLogic!.getChapterTable())
 			}
@@ -104,18 +116,27 @@ class ChoiceLogic: GameScene {
 			} else {
 				self.gameLogic?.setScene(index: self.data?["SkipTo"] as! Int)
 			}
-		} else if (!choice3Node!.isHidden && choice3Node!.frame.contains(point)) {
+			if (flag != nil) {
+				self.gameLogic?.flags.removeAll(where: { $0 == (flag!) })
+			}
+		} else if (choice3Node != nil && !choice3Node!.isHidden && choice3Node!.frame.contains(point)) {
 			if (variableToSet != nil && variables != nil) {
 				self.gameLogic?.variables[variableToSet!] = Bundle.main.localizedString(forKey: variables![2], value: nil, table: self.gameLogic!.getChapterTable())
 			}
 			let skipToSceneList = self.data?["SkipTo"] as! [Int]
 			self.gameLogic?.setScene(index: skipToSceneList[1])
-		} else if (!choice4Node!.isHidden && choice4Node!.frame.contains(point)) {
+			if (flag != nil) {
+				self.gameLogic?.flags.removeAll(where: { $0 == (flag!) })
+			}
+		} else if (choice4Node != nil && !choice4Node!.isHidden && choice4Node!.frame.contains(point)) {
 			if (variableToSet != nil && variables != nil) {
 				self.gameLogic?.variables[variableToSet!] = Bundle.main.localizedString(forKey: variables![3], value: nil, table: self.gameLogic!.getChapterTable())
 			}
 			let skipToSceneList = self.data?["SkipTo"] as! [Int]
 			self.gameLogic?.setScene(index: skipToSceneList[2])
+			if (flag != nil) {
+				self.gameLogic?.flags.removeAll(where: { $0 == (flag!) })
+			}
 		}
 	}
 }
