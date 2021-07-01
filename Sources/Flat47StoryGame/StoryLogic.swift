@@ -43,6 +43,12 @@ class StoryLogic: CutSceneLogic {
 			speakerLabel.isHidden = false
 		}
 		
+		var speakerAreaNode = shakeNode.childNode(withName: "//SpeakerArea") as? SKSpriteNode
+		
+		if (isRoyalSpeaker != nil && isRoyalSpeaker!) {
+			speakerAreaNode = shakeNode.childNode(withName: "//SpeakerAreaRoyal") as? SKSpriteNode
+		}
+		
 		let speakerImageNode = shakeNode.childNode(withName: "//SpeakerImage") as? SKSpriteNode
 		let speakerImage: String? = self.data?["SpeakerImage"] as? String
 		if (speakerImage != nil) {
@@ -53,6 +59,7 @@ class StoryLogic: CutSceneLogic {
 				speakerImageNode?.texture = SKTexture(imageNamed: speakerimagePath!)
 				speakerImageNode?.size = CGSize(width: (speakerImageNode?.texture?.size())!.width * scale, height: (speakerImageNode?.texture?.size())!.height * scale)
 				speakerImageNode?.alpha = 1.0
+				speakerImageNode?.position = speakerAreaNode!.position;
 			} else {
 				speakerImageNode?.isHidden = true
 			}

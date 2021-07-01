@@ -37,9 +37,9 @@ open class CutSceneLogic: GameScene {
 	var readyForNextScene: Bool = false
 	var waitfornext: Bool = false
 	var centerText: Bool = false
+	var blackCover: Bool = false
 	var skipIndent: Bool = false
 	var shakeNode: SKNode = SKNode()
-	var fontColor: UIColor?
 	var pauseFor: Double = 0.0
 	var lastTime: Double = 0.0
 	var queuedSound: String = ""
@@ -80,11 +80,14 @@ open class CutSceneLogic: GameScene {
 			}
 			self.addChild(shakeNode)
 		}
+		let coverTextLabel = shakeNode.childNode(withName: "//CoverText") as? SKLabelNode
+		coverTextLabel?.alpha = 0.0
 		let textLabel = shakeNode.childNode(withName: "//Text") as? SKLabelNode
 		textLabel!.alpha = 1.0
 		fixedText = ""
 		newText = ""
 		textLabel?.attributedText =  NSAttributedString()
+		coverTextLabel?.attributedText =  NSAttributedString()
 		currentTextIndex = -1
 		lastTextChange = 0.0
 		lastAnimationCompleteTime = 0.0
@@ -94,6 +97,7 @@ open class CutSceneLogic: GameScene {
 		readyForNextScene = false
 		waitfornext = false
 		centerText = false
+		blackCover = false
 		pauseFor = 0.0
 		
 		var imageMaskPath = Bundle.main.path(forResource: "ImageMask", ofType: ".png")
@@ -184,15 +188,11 @@ open class CutSceneLogic: GameScene {
 			}
 		}
 		
-		if (fontColor != nil) {
-			let textLabel = shakeNode.childNode(withName: "//Text") as? SKLabelNode
-			textLabel?.fontColor = fontColor!
-			fontColor = nil
-		}
-		
 		let transitionType: String? = self.data?["Transition"] as? String
 		let cover = shakeNode.childNode(withName: "//Cover") as? SKSpriteNode
 		cover?.alpha = 0.0
+		coverTextLabel?.alpha = 0.0
+		coverTextLabel?.isHidden = true
 		if (transitionType != nil) {
 			if (transitionType == "Flash") {
 				let cover = shakeNode.childNode(withName: "//Cover") as? SKSpriteNode
@@ -201,9 +201,9 @@ open class CutSceneLogic: GameScene {
 			} else if (transitionType == "FadeBlack") {
 				cover?.alpha = 1.0
 				cover?.color = self.backgroundColor
-				let textLabel = shakeNode.childNode(withName: "//Text") as? SKLabelNode
-				fontColor = textLabel?.fontColor
-				textLabel?.fontColor = UIColor.lightGray
+				blackCover = true
+				coverTextLabel?.alpha = 1.0
+				coverTextLabel?.isHidden = true
 			}
 		}
 		let disableSpeedText: Bool? = self.data?["DisableSpeedText"] as? Bool
@@ -319,6 +319,7 @@ open class CutSceneLogic: GameScene {
 				lastTextChange = currentTime
 			}
 			let centerTextLabel = shakeNode.childNode(withName: "//CenterText") as? SKLabelNode
+			let coverTextLabel = shakeNode.childNode(withName: "//CoverText") as? SKLabelNode
 			let textLabel = shakeNode.childNode(withName: "//Text") as? SKLabelNode
 			let delta = (currentTime - lastTextChange)
 			
@@ -397,12 +398,20 @@ open class CutSceneLogic: GameScene {
 			
 			if (centerText && centerTextLabel != nil) {
 				textLabel?.isHidden = true
-				centerTextLabel?.attributedText = string
+				coverTextLabel?.isHidden = true
 				centerTextLabel?.isHidden = false
+				centerTextLabel?.attributedText = string
+			} else if (blackCover && coverTextLabel != nil) {
+				centerTextLabel?.isHidden = true
+				textLabel?.isHidden = false
+				coverTextLabel?.isHidden = false
+				coverTextLabel?.attributedText = string
+				textLabel?.attributedText = string
 			} else {
 				centerTextLabel?.isHidden = true
-				textLabel?.attributedText = string
+				coverTextLabel?.isHidden = true
 				textLabel?.isHidden = false
+				textLabel?.attributedText = string
 			}
 			
 			if (remainingCharacters == 0) {
@@ -471,7 +480,13 @@ open class CutSceneLogic: GameScene {
 					let cover = shakeNode.childNode(withName: "//Cover") as? SKSpriteNode
 					cover?.run(SKAction.fadeIn(withDuration: 0.2))
 					cover?.color = self.backgroundColor
+					let textLabel = shakeNode.childNode(withName: "//Text") as? SKLabelNode
+					textLabel?.run(SKAction.fadeOut(withDuration: 0.2))
+					let coverTextLabel = shakeNode.childNode(withName: "//CoverText") as? SKLabelNode
+					coverTextLabel?.removeAllActions()
+					coverTextLabel?.run(SKAction.fadeIn(withDuration: 0.2))
 					queuedBlackCover = false
+					blackCover = true
 				}
 			} else if (hasMoreText()) {
 				nextText()
@@ -554,6 +569,7 @@ open class CutSceneLogic: GameScene {
 		applyShake = false
 		waitfornext = false
 		centerText = false
+		blackCover = false
 		skipIndent = false
 		disableNextSceneIndicator()
 	}
@@ -623,19 +639,25 @@ open class CutSceneLogic: GameScene {
 		} else if (command.starts(with: "[fadecover]")) {
 			let cover = shakeNode.childNode(withName: "//Cover") as? SKSpriteNode
 			cover?.run(SKAction.fadeOut(withDuration: 1.0))
+			let textLabel = shakeNode.childNode(withName: "//Text") as? SKLabelNode
+			textLabel?.run(SKAction.fadeIn(withDuration: 1.0))
+			if (blackCover) {
+				let coverTextLabel = shakeNode.childNode(withName: "//CoverText") as? SKLabelNode
+				coverTextLabel?.run(SKAction.fadeOut(withDuration: 1.0), completion: { [self] in blackCover = false })
+			}
 		} else if (command.starts(with: "[hidecover]")) {
 			let cover = shakeNode.childNode(withName: "//Cover") as? SKSpriteNode
 			cover?.alpha = 0.0
 			let textLabel = shakeNode.childNode(withName: "//Text") as? SKLabelNode
-			textLabel?.fontColor = fontColor
+			textLabel?.alpha = 1.0
+			let coverTextLabel = shakeNode.childNode(withName: "//CoverText") as? SKLabelNode
+			coverTextLabel?.alpha = 0.0
+			blackCover = false
 		} else if (command.starts(with: "[changemask]")) {
 			let storyImage = shakeNode.childNode(withName: "//StoryImage") as? SKSpriteNode
 			storyImage?.shader?.uniformNamed("u_maskTexture")?.textureValue = maskTexture2
 		} else if (command.starts(with: "[blackcover]")) {
 			queuedBlackCover = true
-			let textLabel = shakeNode.childNode(withName: "//Text") as? SKLabelNode
-			fontColor = textLabel?.fontColor
-			textLabel?.fontColor = UIColor.lightGray
 		} else if (command == "[pause]") {
 			pauseFor = 1.0
 		} else if (command == "[longpause]") {
