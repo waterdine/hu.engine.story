@@ -59,7 +59,7 @@ class StoryLogic: CutSceneLogic {
 				speakerImageNode?.texture = SKTexture(imageNamed: speakerimagePath!)
 				speakerImageNode?.size = CGSize(width: (speakerImageNode?.texture?.size())!.width * scale, height: (speakerImageNode?.texture?.size())!.height * scale)
 				speakerImageNode?.alpha = 1.0
-				speakerImageNode?.position = speakerAreaNode!.position;
+				speakerImageNode?.position.x = speakerAreaNode!.position.x;
 			} else {
 				speakerImageNode?.isHidden = true
 			}
