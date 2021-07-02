@@ -443,7 +443,11 @@ open class CutSceneLogic: GameScene {
 		}
 	}
 	
-	open override func interactionBegan(_ point: CGPoint, timestamp: TimeInterval){
+	open override func interactionBegan(_ point: CGPoint, timestamp: TimeInterval) {
+		if (super.handleToolbar(point)) {
+			return
+		}
+
 		// TODO add super call with bool!
 		if (gameMenu?.isHidden == false) {
 			gameMenu?.interactionBegan(point, timestamp: timestamp)
@@ -457,6 +461,7 @@ open class CutSceneLogic: GameScene {
 	
 	open override func interactionEnded(_ point: CGPoint, timestamp: TimeInterval) {
 		if (super.handleToolbar(point)) {
+			gameMenu?.isHidden = false
 			return
 		}
 		

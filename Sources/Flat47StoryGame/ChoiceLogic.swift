@@ -96,6 +96,7 @@ class ChoiceLogic: GameScene {
 	
 	override func interactionEnded(_ point: CGPoint, timestamp: TimeInterval) {
 		if (super.handleToolbar(point)) {
+			gameMenu?.isHidden = false
 			return
 		}
 	   
