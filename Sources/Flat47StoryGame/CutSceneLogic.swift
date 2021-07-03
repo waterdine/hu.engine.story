@@ -61,7 +61,7 @@ open class CutSceneLogic: GameScene {
 			abort()
 		}
 
-		scene.scaleMode = .aspectFill
+		scene.scaleMode = gameLogic.getScaleMode()
 		scene.gameLogic = gameLogic
 		scene.requiresMusic = true
 		

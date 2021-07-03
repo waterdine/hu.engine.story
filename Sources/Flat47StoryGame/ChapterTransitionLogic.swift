@@ -18,7 +18,7 @@ class ChapterTransitionLogic: GameScene {
 			abort()
 		}
 
-		scene.scaleMode = .aspectFill
+		scene.scaleMode = gameLogic.getScaleMode()
 		scene.gameLogic = gameLogic
 		scene.defaultTransition = true
 		

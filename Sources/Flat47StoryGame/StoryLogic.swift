@@ -20,7 +20,7 @@ class StoryLogic: CutSceneLogic {
 			abort()
 		}
  
-		scene.scaleMode = .aspectFill
+		scene.scaleMode = gameLogic.getScaleMode()
 		scene.gameLogic = gameLogic
 		scene.stickyText = false
 		scene.requiresMusic = true

@@ -19,8 +19,8 @@ class RandomChoiceLogic: GameScene {
 			abort()
 		}
 
-		scene.scaleMode = .aspectFill
-		scene.gameLogic = gameLogic;
+		scene.scaleMode = gameLogic.getScaleMode()
+		scene.gameLogic = gameLogic
 		
 		return scene
 	}
