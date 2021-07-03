@@ -306,7 +306,7 @@ open class CutSceneLogic: GameScene {
 		
 		if (speedingText || fastText) {
 			currentTextSpeed = 0.01
-		} else if (!speedingText && !fastText && currentTextSpeed == 0.01) {
+		} else if (!speedingText && !fastText && currentTextSpeed != self.gameLogic!.textFadeTime) {
 			updateCharactersForTextSpeed(currentTime: currentTime)
 			currentTextSpeed = self.gameLogic!.textFadeTime
 		}
