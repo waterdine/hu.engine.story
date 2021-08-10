@@ -19,4 +19,5 @@ public func RegisterStoryGameScenes(gameLogic: GameLogic) {
 	gameLogic.sceneTypes["TempCutScene"] = CutSceneLogic.newScene(gameLogic: gameLogic)
 	gameLogic.sceneTypes["ChapterTransition"] = ChapterTransitionLogic.newScene(gameLogic: gameLogic)
 	gameLogic.sceneTypes["Story"] = StoryLogic.newScene(gameLogic: gameLogic)
+    gameLogic.sceneTypes["CharacterChoice"] = CharacterChoiceLogic.newScene(gameLogic: gameLogic)
 }

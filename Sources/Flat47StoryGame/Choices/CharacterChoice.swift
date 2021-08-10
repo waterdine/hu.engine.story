@@ -7,7 +7,7 @@
 
 import SpriteKit
 import Flat47Game
-/*
+
 enum CatType {
 	case MCat, FCat, None
 }
@@ -133,4 +133,3 @@ class CharacterChoiceLogic: GameScene, UITextFieldDelegate {
 		return true
 	}
 }
-*/
