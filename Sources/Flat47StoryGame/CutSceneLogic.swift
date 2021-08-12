@@ -81,8 +81,12 @@ open class CutSceneLogic: GameScene {
 		}
 		let coverTextLabel = shakeNode.childNode(withName: "//CoverText") as? SKLabelNode
 		coverTextLabel?.alpha = 0.0
+        coverTextLabel?.fontName = Bundle.main.localizedString(forKey: "FontName", value: nil, table: "Story")
 		let textLabel = shakeNode.childNode(withName: "//Text") as? SKLabelNode
 		textLabel!.alpha = 1.0
+        textLabel?.fontName = Bundle.main.localizedString(forKey: "FontName", value: nil, table: "Story")
+        let centerTextLabel = shakeNode.childNode(withName: "//CenterText") as? SKLabelNode
+        centerTextLabel?.fontName = Bundle.main.localizedString(forKey: "FontName", value: nil, table: "Story")
 		fixedText = ""
 		newText = ""
 		textLabel?.attributedText = NSAttributedString()
