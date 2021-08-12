@@ -85,8 +85,8 @@ open class CutSceneLogic: GameScene {
 		textLabel!.alpha = 1.0
 		fixedText = ""
 		newText = ""
-		textLabel?.attributedText =  NSAttributedString()
-		coverTextLabel?.attributedText =  NSAttributedString()
+		textLabel?.attributedText = NSAttributedString()
+		coverTextLabel?.attributedText = NSAttributedString()
 		currentTextIndex = -1
 		lastTextChange = 0.0
 		lastAnimationCompleteTime = 0.0

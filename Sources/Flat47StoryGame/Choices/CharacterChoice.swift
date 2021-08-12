@@ -30,7 +30,7 @@ class CharacterChoiceLogic: GameScene, UITextFieldDelegate {
 	class func newScene(gameLogic: GameLogic) -> CharacterChoiceLogic {
 		guard let scene = CharacterChoiceLogic(fileNamed: "CharacterChoice" + gameLogic.getAspectSuffix()) else {
 			print("Failed to load CharacterChoice.sks")
-			abort()
+            return CharacterChoiceLogic()
 		}
 
 		scene.scaleMode = .aspectFill
