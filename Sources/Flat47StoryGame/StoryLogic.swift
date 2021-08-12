@@ -34,12 +34,15 @@ class StoryLogic: CutSceneLogic {
 		let speakerLabel = shakeNode.childNode(withName: "//Speaker") as! SKLabelNode
 		let isRoyalSpeaker: Bool? = self.data?["RoyalSpeaker"] as? Bool
         let speaker = Bundle.main.localizedString(forKey: ((self.data?["Speaker"] as? String)!), value: nil, table: "Story")
+        let font = Bundle.main.localizedString(forKey: "CharacterFontName", value: nil, table: "Story")
 		if (isRoyalSpeaker != nil && isRoyalSpeaker!) {
             speakerRoyalLabel.text = speaker
+            speakerRoyalLabel.fontName = font
 			speakerRoyalLabel.isHidden = false
 			speakerLabel.isHidden = true
 		} else {
 			speakerLabel.text = speaker
+            speakerLabel.fontName = font
 			speakerRoyalLabel.isHidden = true
 			speakerLabel.isHidden = false
 		}
