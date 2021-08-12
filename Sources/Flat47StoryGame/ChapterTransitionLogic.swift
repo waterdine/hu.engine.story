@@ -40,7 +40,8 @@ class ChapterTransitionLogic: GameScene {
 			verticalTitleLabel?.text = Bundle.main.localizedString(forKey: (self.data?["VerticalTitle"] as! String), value: nil, table: self.gameLogic!.getChapterTable())
 		}
 		let showPressToContinue = self.data?["ShowPressToContinue"] as? Bool
-		let pressNode = self.childNode(withName: "//Press")
+		let pressNode = self.childNode(withName: "//Press") as? SKLabelNode
 		pressNode?.isHidden = (showPressToContinue == nil || showPressToContinue! == false)
+        pressNode?.text = Bundle.main.localizedString(forKey: "Press to continue...", value: nil, table: "Story")
 	}
 }
