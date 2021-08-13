@@ -64,7 +64,14 @@ open class CutSceneLogic: GameScene {
 		scene.scaleMode = gameLogic.getScaleMode()
 		scene.gameLogic = gameLogic
 		scene.requiresMusic = true
-		
+        let fontSizeScale: CGFloat = CGFloat(Float.init(Bundle.main.localizedString(forKey: "FontScale", value: nil, table: "Story"))!)
+        let coverTextLabel = scene.childNode(withName: "//CoverText") as? SKLabelNode
+        coverTextLabel?.fontSize = coverTextLabel!.fontSize * fontSizeScale
+        let textLabel = scene.childNode(withName: "//Text") as? SKLabelNode
+        textLabel?.fontSize = textLabel!.fontSize * fontSizeScale
+        let centerTextLabel = scene.childNode(withName: "//CenterText") as? SKLabelNode
+        centerTextLabel?.fontSize = centerTextLabel!.fontSize * fontSizeScale
+        
 		return scene
 	}
 	

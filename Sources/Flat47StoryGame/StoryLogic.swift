@@ -24,6 +24,9 @@ class StoryLogic: CutSceneLogic {
 		scene.gameLogic = gameLogic
 		scene.stickyText = false
 		scene.requiresMusic = true
+        let fontSizeScale: CGFloat = CGFloat(Float.init(Bundle.main.localizedString(forKey: "CharacterFontScale", value: nil, table: "Story"))!)
+        let textLabel = scene.childNode(withName: "//Text") as? SKLabelNode
+        textLabel?.fontSize = textLabel!.fontSize * fontSizeScale
 		
 		return scene
 	}
