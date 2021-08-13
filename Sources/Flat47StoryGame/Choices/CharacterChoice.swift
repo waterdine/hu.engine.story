@@ -12,7 +12,12 @@ enum CatType {
 	case MCat, FCat, None
 }
 
-@available(OSX 10.12, *)
+#if os(OSX)
+typealias UITextFieldDelegate = NSTextFieldDelegate
+typealias UITextField = NSTextField
+#endif
+
+@available(OSX 10.13, *)
 @available(iOS 11.0, *)
 class CharacterChoiceLogic: GameScene, UITextFieldDelegate {
 
@@ -50,18 +55,21 @@ class CharacterChoiceLogic: GameScene, UITextFieldDelegate {
 		selectedNodeBorder?.isHidden = true
 		nameField = UITextField()
 		nameField?.delegate = self
+#if !os(OSX)
 		nameField?.autocorrectionType = .no
+#endif
 		nameField?.isHidden = true
 		view.addSubview(nameField!)
 	}
-	
-	override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
-		let point: CGPoint = (touches.first?.location(in: self))!
+    
+    override func interactionEnded(_ point: CGPoint, timestamp: TimeInterval) {
 		if (nameArea!.frame.contains(point)) {
 			nameField?.becomeFirstResponder()
 			catName = nameAreaLabel!.text!
 			nameAreaLabel!.text = ""
+#if !os(OSX)
 			nameField!.text = ""
+#endif
 		} else if (fCatArea!.frame.contains(point)) {
 			catType = .FCat
 			selectedNodeBorder?.isHidden = false
@@ -132,7 +140,11 @@ class CharacterChoiceLogic: GameScene, UITextFieldDelegate {
 	
 	func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
 		let length = range.location + (range.length == 0 ? string.count : range.length - 1)
+#if !os(OSX)
 		var candidateString: String = textField.text!
+#else
+        var candidateString: String = ""
+#endif
 		let neededChars = length - candidateString.count
 		if (neededChars > 0) {
 			for _ in 0 ... neededChars {
@@ -156,7 +168,9 @@ class CharacterChoiceLogic: GameScene, UITextFieldDelegate {
 	
 	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 		nameField?.resignFirstResponder()
+#if !os(OSX)
 		catName = (nameField?.text)!
+#endif
 		nameAreaLabel!.text = catName
 		return true
 	}
