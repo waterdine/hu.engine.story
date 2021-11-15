@@ -18,7 +18,7 @@ typealias UITextField = NSTextField
 #endif
 
 @available(OSX 10.13, *)
-@available(iOS 11.0, *)
+@available(iOS 9.0, *)
 class CharacterChoiceLogic: GameScene, UITextFieldDelegate {
 
 	var createArea: SKSpriteNode?

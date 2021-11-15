@@ -15,7 +15,7 @@ typealias UIFont = NSFont
 #endif
 
 @available(OSX 10.13, *)
-@available(iOS 11.0, *)
+@available(iOS 9.0, *)
 open class CutSceneLogic: GameScene {
 	
 	var currentTextIndex: Int = 0
@@ -96,8 +96,12 @@ open class CutSceneLogic: GameScene {
         centerTextLabel?.fontName = Bundle.main.localizedString(forKey: "FontName", value: nil, table: "Story")
 		fixedText = ""
 		newText = ""
-		textLabel?.attributedText = NSAttributedString()
-		coverTextLabel?.attributedText = NSAttributedString()
+        if #available(iOS 11.0, *) {
+            textLabel?.attributedText = NSAttributedString()
+            coverTextLabel?.attributedText = NSAttributedString()
+        } else {
+            // Fallback on earlier versions
+        }
 		currentTextIndex = -1
 		lastTextChange = 0.0
 		lastAnimationCompleteTime = 0.0
@@ -424,13 +428,21 @@ open class CutSceneLogic: GameScene {
 				textLabel?.isHidden = true
 				coverTextLabel?.isHidden = true
 				centerTextLabel?.isHidden = false
-				centerTextLabel?.attributedText = string
+                if #available(iOS 11.0, *) {
+                    centerTextLabel?.attributedText = string
+                } else {
+                    // Fallback on earlier versions
+                }
 			} else {
 				centerTextLabel?.isHidden = true
 				textLabel?.isHidden = false
 				coverTextLabel?.isHidden = false
-				coverTextLabel?.attributedText = coverString
-				textLabel?.attributedText = string
+                if #available(iOS 11.0, *) {
+                    coverTextLabel?.attributedText = coverString
+                    textLabel?.attributedText = string
+                } else {
+                    // Fallback on earlier versions
+                }
 			}
 			
 			if (remainingCharacters == 0) {
@@ -712,7 +724,11 @@ open class CutSceneLogic: GameScene {
 				self.gameLogic?.fadePlayer?.stop()
 			}
 			self.gameLogic?.fadePlayer = self.gameLogic?.player
-			self.gameLogic?.fadePlayer?.setVolume(0, fadeDuration: 3.0)
+            if #available(iOS 10.0, *) {
+                self.gameLogic?.fadePlayer?.setVolume(0, fadeDuration: 3.0)
+            } else {
+                self.gameLogic?.fadePlayer?.volume = 0;
+            }
 			self.gameLogic?.player = nil
 		}
 	}
