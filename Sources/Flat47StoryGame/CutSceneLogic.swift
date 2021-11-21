@@ -471,7 +471,7 @@ open class CutSceneLogic: GameScene {
 			return
 		}
 
-		// TODO add super call with bool!
+		// atode: add super call with bool!
 		if (gameMenu?.isHidden == false) {
 			gameMenu?.interactionBegan(point, timestamp: timestamp)
 			return

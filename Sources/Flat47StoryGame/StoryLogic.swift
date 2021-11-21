@@ -13,6 +13,8 @@ import Flat47Game
 class StoryLogic: CutSceneLogic {
 	
 	var originalSpeakerY: CGFloat? = nil
+    //var characters: [CharacterLogic] = []
+    var character: CharacterLogic? = nil
 	
 	override class func newScene(gameLogic: GameLogic) -> StoryLogic {
 		guard let scene = StoryLogic(fileNamed: "Story" + gameLogic.getAspectSuffix()) else {
@@ -33,6 +35,10 @@ class StoryLogic: CutSceneLogic {
 	
 	override func didMove(to view: SKView) {
 		super.didMove(to: view)
+        
+        /*for <#item#> in <#items#> {
+         characters.append(baseCharacter);
+        }*/
 		let speakerRoyalLabel = shakeNode.childNode(withName: "//SpeakerRoyal") as! SKLabelNode
 		let speakerLabel = shakeNode.childNode(withName: "//Speaker") as! SKLabelNode
 		let isRoyalSpeaker: Bool? = self.data?["RoyalSpeaker"] as? Bool
@@ -132,28 +138,22 @@ class StoryLogic: CutSceneLogic {
 	
 	override func processTextCommand(command: String) {
 		super.processTextCommand(command: command)
-		let speakerImageNode = shakeNode.childNode(withName: "//SpeakerImage") as? SKSpriteNode
-		let textNode = shakeNode.childNode(withName: "//Text") as? SKLabelNode
-		var speakerAreaNode = shakeNode.childNode(withName: "//SpeakerArea") as? SKSpriteNode
+        
+        if (character != nil) {
+            var speakerAreaNode = shakeNode.childNode(withName: "//SpeakerArea") as? SKSpriteNode
+            
+            if (character!.isRoyalSpeaker) {
+                speakerAreaNode = shakeNode.childNode(withName: "//SpeakerAreaRoyal") as? SKSpriteNode
+            }
+            character?.processTextCommand(command: command, speakerAreaNode: speakerAreaNode!)
+        }
+        
+        let textNode = shakeNode.childNode(withName: "//Text") as? SKLabelNode
 		
-		let isRoyalSpeaker: Bool? = self.data?["RoyalSpeaker"] as? Bool
-		if (isRoyalSpeaker != nil && isRoyalSpeaker!) {
-			speakerAreaNode = shakeNode.childNode(withName: "//SpeakerAreaRoyal") as? SKSpriteNode
-		}
-		
-		let halfWidth = (speakerImageNode?.frame.width)! / 2.0
 		if (command == "[jump]") {
-			speakerImageNode?.run(SKAction.sequence([SKAction.moveBy(x: 0.0, y: 20.0, duration: 0.2), SKAction.moveBy(x: 0.0, y: -10.0, duration: 0.1), SKAction.moveBy(x: 0.0, y: 20.0, duration: 0.2), SKAction.moveBy(x: 0.0, y: -10.0, duration: 0.1)]))
 		} else if (command == "[enterleft]") {
-			speakerImageNode?.position = CGPoint(x: self.frame.minX - halfWidth, y: (speakerImageNode?.position.y)!)
-			speakerImageNode?.run(SKAction.moveTo(x: (speakerAreaNode?.position.x)!, duration: 0.7))
-			speakerImageNode?.isHidden = false
 		} else if (command == "[enterright]") {
-			speakerImageNode?.position = CGPoint(x: self.frame.maxX + halfWidth, y: (speakerImageNode?.position.y)!)
-			speakerImageNode?.run(SKAction.moveTo(x: (speakerAreaNode?.position.x)!, duration: 0.7))
-			speakerImageNode?.isHidden = false
 		} else if (command == "[fadeout]") {
-			speakerImageNode?.run(SKAction.fadeOut(withDuration: 0.7))
 			textNode?.run(SKAction.fadeOut(withDuration: 0.7))
 		}
 	}
