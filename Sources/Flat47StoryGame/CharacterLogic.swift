@@ -15,6 +15,8 @@ class CharacterLogic: GameSubScene {
     var originalSpeakerY: CGFloat = 0.0
     var speakerImageNode: SKSpriteNode? = nil
     var isRoyalSpeaker: Bool = false
+    var speaker: String = ""
+    var speakerImages: [String: SKTexture] = [:]
     
     public init(gameLogic: GameLogic?, shakeNode: SKNode, startHidden: Bool, data: NSDictionary) {
         super.init(gameLogic: gameLogic)
@@ -47,14 +49,23 @@ class CharacterLogic: GameSubScene {
         speakerImageNode = shakeNode.childNode(withName: "//SpeakerImage") as? SKSpriteNode
         let speakerImage: String? = data["SpeakerImage"] as? String
         if (speakerImage != nil) {
-            let speakerimagePath: String? = Bundle.main.path(forResource: speakerImage, ofType: ".png")
-            if (speakerimagePath != nil) {
+            let images = Bundle.main.paths(forResourcesOfType: ".png", inDirectory: "Characters/" + speakerImage!)
+            for image in images {
+                let fileName = URL(string: image)?.lastPathComponent
+                speakerImages[fileName!] = SKTexture(imageNamed: image)
+            }
+            if (speakerImages.count > 0) {
                 let scale = speakerImageNode?.userData!["scale"] as! CGFloat
-                speakerImageNode?.isHidden = false
-                speakerImageNode?.texture = SKTexture(imageNamed: speakerimagePath!)
-                speakerImageNode?.size = CGSize(width: (speakerImageNode?.texture?.size())!.width * scale, height: (speakerImageNode?.texture?.size())!.height * scale)
-                speakerImageNode?.alpha = 1.0
-                speakerImageNode?.position.x = speakerAreaNode!.position.x;
+                let defaultTexture = speakerImages["MouthClosed.png"]
+                if (defaultTexture != nil) {
+                    speakerImageNode?.texture = defaultTexture
+                    speakerImageNode?.isHidden = false
+                    speakerImageNode?.size = CGSize(width: (speakerImageNode?.texture?.size())!.width * scale, height: (speakerImageNode?.texture?.size())!.height * scale)
+                    speakerImageNode?.alpha = 1.0
+                    speakerImageNode?.position.x = speakerAreaNode!.position.x
+                } else {
+                    speakerImageNode?.isHidden = true
+                }
             } else {
                 speakerImageNode?.isHidden = true
             }
@@ -101,6 +112,9 @@ class CharacterLogic: GameSubScene {
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func update(_ currentTime: TimeInterval) {
     }
     
     func processTextCommand(command: String, speakerAreaNode: SKSpriteNode) {

@@ -36,49 +36,30 @@ class StoryLogic: CutSceneLogic {
 	override func didMove(to view: SKView) {
 		super.didMove(to: view)
         
-        /*for <#item#> in <#items#> {
-         characters.append(baseCharacter);
-        }*/
+        var startHidden = false
+        let textList: NSArray? = self.data?["Text"] as? NSArray
+        if (textList != nil && textList!.count > 0 && ((textList?[0] as! String) == "[enterleft]" || (textList?[0] as! String) == "[enterright]")) {
+            startHidden = true
+        }
+        
+        character = CharacterLogic(gameLogic: gameLogic, shakeNode: shakeNode, startHidden: startHidden, data: data!)
+        
 		let speakerRoyalLabel = shakeNode.childNode(withName: "//SpeakerRoyal") as! SKLabelNode
 		let speakerLabel = shakeNode.childNode(withName: "//Speaker") as! SKLabelNode
-		let isRoyalSpeaker: Bool? = self.data?["RoyalSpeaker"] as? Bool
-        let speaker = Bundle.main.localizedString(forKey: ((self.data?["Speaker"] as? String)!), value: nil, table: "Story")
         let font = Bundle.main.localizedString(forKey: "CharacterFontName", value: nil, table: "Story")
-		if (isRoyalSpeaker != nil && isRoyalSpeaker!) {
-            speakerRoyalLabel.text = speaker
+        if (character!.isRoyalSpeaker) {
+            speakerRoyalLabel.text = character!.speaker
             speakerRoyalLabel.fontName = font
 			speakerRoyalLabel.isHidden = false
 			speakerLabel.isHidden = true
 		} else {
-			speakerLabel.text = speaker
+            speakerLabel.text = character!.speaker
             speakerLabel.fontName = font
 			speakerRoyalLabel.isHidden = true
 			speakerLabel.isHidden = false
 		}
 		
-		var speakerAreaNode = shakeNode.childNode(withName: "//SpeakerArea") as? SKSpriteNode
-		
-		if (isRoyalSpeaker != nil && isRoyalSpeaker!) {
-			speakerAreaNode = shakeNode.childNode(withName: "//SpeakerAreaRoyal") as? SKSpriteNode
-		}
-		
 		let speakerImageNode = shakeNode.childNode(withName: "//SpeakerImage") as? SKSpriteNode
-		let speakerImage: String? = self.data?["SpeakerImage"] as? String
-		if (speakerImage != nil) {
-			let speakerimagePath: String? = Bundle.main.path(forResource: speakerImage, ofType: ".png")
-			if (speakerimagePath != nil) {
-				let scale = speakerImageNode?.userData!["scale"] as! CGFloat
-				speakerImageNode?.isHidden = false
-				speakerImageNode?.texture = SKTexture(imageNamed: speakerimagePath!)
-				speakerImageNode?.size = CGSize(width: (speakerImageNode?.texture?.size())!.width * scale, height: (speakerImageNode?.texture?.size())!.height * scale)
-				speakerImageNode?.alpha = 1.0
-				speakerImageNode?.position.x = speakerAreaNode!.position.x;
-			} else {
-				speakerImageNode?.isHidden = true
-			}
-		} else {
-			speakerImageNode?.isHidden = true
-		}
 		
 		if (originalSpeakerY != nil) {
 			speakerImageNode?.position.y = originalSpeakerY!
@@ -92,11 +73,6 @@ class StoryLogic: CutSceneLogic {
 			speakerImageNode?.position.y = self.frame.maxY - (speakerImageNode?.size.height)! / 2.0
 		} else {
 			speakerImageNode?.zRotation = 0.0
-		}
-		
-		let textList: NSArray? = self.data?["Text"] as? NSArray
-		if (textList != nil && textList!.count > 0 && ((textList?[0] as! String) == "[enterleft]" || (textList?[0] as! String) == "[enterright]") ) {
-			speakerImageNode?.isHidden = true
 		}
 			
 		let storyImageNode = self.childNode(withName: "//StoryImage")
@@ -130,6 +106,13 @@ class StoryLogic: CutSceneLogic {
 			}
 		}
 	}
+    
+    override func update(_ currentTime: TimeInterval) {
+        super.update(currentTime)
+        if (character != nil) {
+            character!.update(currentTime)
+        }
+    }
 	
 	override func readyForNextAction(currentTime: TimeInterval, delay: Double) -> Bool {
 		let speakerImageNode = shakeNode.childNode(withName: "//SpeakerImage") as? SKSpriteNode
