@@ -218,15 +218,15 @@ open class CutSceneLogic: GameScene {
 				textLabel?.alpha = 0.0
 			}
 		}
-		let disableSpeedText: Bool? = self.data?["DisableSpeedText"] as? Bool
+        let disableSpeedText: Bool? = (data as! CutSceneScene).DisableSpeedText
 		disableSpeedingText = (disableSpeedText != nil && disableSpeedText! == true)
 		
-		let variableToSet = self.data?["VariableToSet"] as? String
-		let variableText = self.data?["VariableText"] as? String
+		let variableToSet = (data as! CutSceneScene).VariableToSet
+		let variableText = (data as! CutSceneScene).VariableText
 		if (variableToSet != nil && variableText != nil) {
 			self.gameLogic?.variables[variableToSet!] = Bundle.main.localizedString(forKey: variableText!, value: nil, table: self.gameLogic!.getChapterTable())
 		}
-		let flag = self.data?["Flag"] as? String
+		let flag = (data as! CutSceneScene).Flag
 		if (flag != nil) {
 			self.gameLogic?.flags.append(flag!)
 		}
@@ -574,8 +574,8 @@ open class CutSceneLogic: GameScene {
 			return true
 		}
 		
-		let textList: NSArray? = self.data?["Text"] as? NSArray
-		return (currentTextIndex == -1) || (stickyText && (textList![self.currentTextIndex + 1] as! String != ""))
+        let textList: [TextLine]? = (data as! CutSceneScene).Text
+		return (currentTextIndex == -1) || (stickyText && (textList![self.currentTextIndex + 1].textString != ""))
 	}
 	
 	func readyForNextAction(currentTime: TimeInterval, delay: Double) -> Bool {
@@ -584,14 +584,14 @@ open class CutSceneLogic: GameScene {
 	}
 	
 	func hasMoreText() -> Bool {
-		let textList: NSArray? = self.data?["Text"] as? NSArray
+		let textList: [TextLine]? = (data as! CutSceneScene).Text
 		return textList!.count > self.currentTextIndex + 1
 	}
 	
 	func hasTextCommand() -> Bool {
-		let textList: NSArray? = self.data?["Text"] as? NSArray
+		let textList: [TextLine]? = (data as! CutSceneScene).Text
 		if (textList != nil && textList!.count > self.currentTextIndex) {
-			let nextLine = (textList![self.currentTextIndex] as! String)
+			let nextLine = (textList![self.currentTextIndex].textString)
 			return nextLine.hasPrefix("[") && nextLine.hasSuffix("]")
 		} else {
 			return false
@@ -749,21 +749,21 @@ open class CutSceneLogic: GameScene {
 			fixedText += "\n"
 		}
 
-		let textList: NSArray? = self.data?["Text"] as? NSArray
+		let textList: [TextLine] = (data as! CutSceneScene).Text
 		clearTextCommands()
 		while (hasTextCommand()) {
-			processTextCommand(command: (textList?[self.currentTextIndex] as! String))
+            processTextCommand(command: (textList[self.currentTextIndex].textString))
 			currentTextIndex += 1
 		}
 		
-		if (textList != nil && textList!.count > self.currentTextIndex) {
+		if (textList.count > self.currentTextIndex) {
 			if (waitfornext) {
 				fixedText = ""
 				newText = skipIndent ? "" : "\t"
 			} else if (fixedText != "" && fixedText != "\t" && !skipIndent) {
 				newText += "\t"
 			}
-			var nextLine = Bundle.main.localizedString(forKey: (textList?[self.currentTextIndex] as! String), value: nil, table: self.gameLogic!.getChapterTable())
+			var nextLine = Bundle.main.localizedString(forKey: (textList[self.currentTextIndex].textString), value: nil, table: self.gameLogic!.getChapterTable())
 			nextLine = self.gameLogic!.unwrapVariables(text: nextLine)
 			newText += nextLine
 		}

@@ -12,8 +12,8 @@ import Flat47Game
 @available(iOS 9.0, *)
 class ChoiceLogic: GameScene {
 	
-	var choiceNodes: [SKSpriteNode]
-    var choiceLabels: [SKLabelNode]
+	var choiceNodes: [SKSpriteNode] = []
+    var choiceLabels: [SKLabelNode] = []
 	
 	class func newScene(gameLogic: GameLogic) -> ChoiceLogic {
 		guard let scene = ChoiceLogic(fileNamed: "Choice" + gameLogic.getAspectSuffix()) else {
@@ -96,7 +96,7 @@ class ChoiceLogic: GameScene {
         let variableToSet = (data as! StoryScene).VariableToSet
         for choice in (data as! ChoiceScene).Choices! {
             if (variableToSet != nil) {
-                self.gameLogic?.variables[variableToSet!] = Bundle.main.localizedString(forKey: choice, value: nil, table: self.gameLogic!.getChapterTable())
+                self.gameLogic?.variables[variableToSet!] = Bundle.main.localizedString(forKey: choice.Text, value: nil, table: self.gameLogic!.getChapterTable())
             }
             if (choice.SkipTo != nil) {
                 self.gameLogic?.setScene(index: choice.SkipTo!)
