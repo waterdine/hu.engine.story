@@ -37,8 +37,8 @@ class StoryLogic: CutSceneLogic {
 		super.didMove(to: view)
         
         var startHidden = false
-        let textList: NSArray? = self.data?["Text"] as? NSArray
-        if (textList != nil && textList!.count > 0 && ((textList?[0] as! String) == "[enterleft]" || (textList?[0] as! String) == "[enterright]")) {
+        let textList: [TextLine]? = (data as! StoryScene).Text
+        if (textList != nil && textList!.count > 0 && ((textList?[0].textString == "[enterleft]") || (textList?[0].textString == "[enterright]"))) {
             startHidden = true
         }
         
@@ -66,7 +66,7 @@ class StoryLogic: CutSceneLogic {
 			originalSpeakerY = nil
 		}
 		
-		let imageRotation = self.data?["Rotation"] as? Float
+        let imageRotation = (data as! StoryScene).Rotation
 		if (imageRotation != nil) {
 			speakerImageNode?.zRotation = CGFloat((Double(imageRotation!) / 180.0) * Double.pi)
 			originalSpeakerY = speakerImageNode?.position.y
@@ -78,7 +78,7 @@ class StoryLogic: CutSceneLogic {
 		let storyImageNode = self.childNode(withName: "//StoryImage")
 		let disableOffset = storyImageNode?.userData?["disableOffset"] as? Bool
 		if (disableOffset == nil || disableOffset! == false) {
-			let imageOffset = self.data?["Offset"] as? Int
+            let imageOffset = (data as! StoryScene).Offset
 			if (imageOffset != nil) {
 				storyImageNode?.position = CGPoint(x: CGFloat(imageOffset!) * storyImageNode!.xScale, y: 0)
 			} else {
@@ -87,7 +87,7 @@ class StoryLogic: CutSceneLogic {
 		}
 		
 		let textArea = shakeNode.childNode(withName: "//TextArea") as? SKSpriteNode
-		var theme = self.data?["Theme"] as? String
+        var theme = (data as! StoryScene).Theme
 		if (theme == nil) {
 			theme = "Theme1"
 		}

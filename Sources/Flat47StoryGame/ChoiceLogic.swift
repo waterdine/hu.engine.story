@@ -12,10 +12,8 @@ import Flat47Game
 @available(iOS 9.0, *)
 class ChoiceLogic: GameScene {
 	
-	var choice1Node: SKSpriteNode?
-	var choice2Node: SKSpriteNode?
-	var choice3Node: SKSpriteNode?
-	var choice4Node: SKSpriteNode?
+	var choiceNodes: [SKSpriteNode]
+    var choiceLabels: [SKLabelNode]
 	
 	class func newScene(gameLogic: GameLogic) -> ChoiceLogic {
 		guard let scene = ChoiceLogic(fileNamed: "Choice" + gameLogic.getAspectSuffix()) else {
@@ -32,59 +30,48 @@ class ChoiceLogic: GameScene {
 	
 	override func didMove(to view: SKView) {
 		super.didMove(to: view)
-		choice1Node = self.childNode(withName: "//Choice1") as? SKSpriteNode
-		choice2Node = self.childNode(withName: "//Choice2") as? SKSpriteNode
-		choice3Node = self.childNode(withName: "//Choice3") as? SKSpriteNode
-		choice4Node = self.childNode(withName: "//Choice4") as? SKSpriteNode
+        choiceNodes.append(self.childNode(withName: "//Choice1") as! SKSpriteNode)
+        choiceNodes.append(self.childNode(withName: "//Choice2") as! SKSpriteNode)
+        choiceNodes.append(self.childNode(withName: "//Choice3") as! SKSpriteNode)
+        choiceNodes.append(self.childNode(withName: "//Choice4") as! SKSpriteNode)
+        choiceLabels.append(self.childNode(withName: "//Choice1Label") as! SKLabelNode)
+        choiceLabels.append(self.childNode(withName: "//Choice2Label") as! SKLabelNode)
+        choiceLabels.append(self.childNode(withName: "//Choice3Label") as! SKLabelNode)
+        choiceLabels.append(self.childNode(withName: "//Choice4Label") as! SKLabelNode)
 		
-		let hideOnFlags = self.data?["HideOnFlag"] as? [String]
+        //let hideOnFlags = (data as! ChoiceScene).HideOnFlag
 		let directionLabel = self.childNode(withName: "//DirectingLabel") as? SKLabelNode
-		directionLabel!.text = Bundle.main.localizedString(forKey: (self.data?["DirectingText"] as! String), value: nil, table: self.gameLogic!.getChapterTable())
-				
-		let choice1Label = self.childNode(withName: "//Choice1Label") as? SKLabelNode
-		choice1Label!.text = Bundle.main.localizedString(forKey: (self.data?["Choice1Text"] as! String), value: nil, table: self.gameLogic!.getChapterTable())
-		choice1Label!.text = self.gameLogic!.unwrapVariables(text: choice1Label!.text!)
-		if (choice3Node != nil) {
-			choice1Node?.size.height = max(choice3Node!.frame.height, choice1Label!.frame.height)
-		}
-		choice1Node?.isHidden = (hideOnFlags == nil || hideOnFlags![0] == "" || !self.gameLogic!.flags.contains(hideOnFlags![0])) ? false : true
-		
-		let choice2Label = self.childNode(withName: "//Choice2Label") as? SKLabelNode
-		if (self.data?["Choice2Text"] != nil) {
-			choice2Label!.text = Bundle.main.localizedString(forKey: (self.data?["Choice2Text"] as! String), value: nil, table: self.gameLogic!.getChapterTable())
-			choice2Label!.text = self.gameLogic!.unwrapVariables(text: choice2Label!.text!)
-			choice2Node?.isHidden = (hideOnFlags == nil || hideOnFlags![1] == "" || !self.gameLogic!.flags.contains(hideOnFlags![1])) ? false : true
-		} else {
-			choice2Label?.text = ""
-			choice2Node?.isHidden = true
-		}
+        directionLabel!.text = Bundle.main.localizedString(forKey: (data as! ChoiceScene).DirectingText, value: nil, table: self.gameLogic!.getChapterTable())
+        
+        for choiceNode in choiceNodes {
+            choiceNode.isHidden = true
+        }
+        
+        for choiceLabel in choiceLabels {
+            choiceLabel.text = ""
+        }
+        
+        for (index, choice) in (data as! ChoiceScene).Choices!.enumerated() {
+            //
+            if (choiceLabels.count > index) {
+                let choiceLabel = choiceLabels[index]
+                let choiceNode = choiceNodes[index]
+                choiceLabel.text = Bundle.main.localizedString(forKey: choice.Text, value: nil, table: self.gameLogic!.getChapterTable())
+                choiceLabel.text = self.gameLogic!.unwrapVariables(text: choiceLabel.text!)
+                /*if (choice3Node != nil) {
+                    choiceNode?.size.height = max(choiceNode!.frame.height, choiceLabel!.frame.height)
+                }*/
+                choiceNode.isHidden = (choice.HideOnFlag == nil || choice.HideOnFlag! == "" || !self.gameLogic!.flags.contains(choice.HideOnFlag!)) ? false : true
+            }
+        }
+		/*
 		if (choice3Node != nil) {
 			choice2Node?.size.height = max(choice3Node!.frame.height, choice2Label!.frame.height)
 			choice2Node?.position.y = (choice1Node?.position.y)! - (choice1Node?.frame.height)! * 1.2
-		}
-		
-		let choice3Label = self.childNode(withName: "//Choice3Label") as? SKLabelNode
-		if (self.data?["Choice3Text"] != nil) {
-			choice3Label!.text = Bundle.main.localizedString(forKey: (self.data?["Choice3Text"] as! String), value: nil, table: self.gameLogic!.getChapterTable())
-			choice3Label!.text = self.gameLogic!.unwrapVariables(text: choice3Label!.text!)
-			choice3Node?.isHidden = (hideOnFlags == nil || hideOnFlags![2] == "" || !self.gameLogic!.flags.contains(hideOnFlags![2])) ? false : true
-		} else {
-			choice3Label?.text = ""
-			choice3Node?.isHidden = true
-		}
-		
-		let choice4Label = self.childNode(withName: "//Choice4Label") as? SKLabelNode
-		if (self.data?["Choice4Text"] != nil) {
-			choice4Label!.text = Bundle.main.localizedString(forKey: (self.data?["Choice4Text"] as! String), value: nil, table: self.gameLogic!.getChapterTable())
-			choice4Label!.text = self.gameLogic!.unwrapVariables(text: choice4Label!.text!)
-			choice4Node?.isHidden = (hideOnFlags == nil || hideOnFlags![3] == "" || !self.gameLogic!.flags.contains(hideOnFlags![3])) ? false : true
-		} else {
-			choice4Label?.text = ""
-			choice4Node?.isHidden = true
-		}
+		}*/
 		
 		let storyImage = self.childNode(withName: "//StoryImage") as? SKSpriteNode
-		let image: String = self.data?["Image"] as! String
+        let image: String = (data as! StoryScene).Image
 		let imagePath = Bundle.main.path(forResource: image, ofType: ".png")
 		if (imagePath != nil) {
 			storyImage?.isHidden = false
@@ -105,10 +92,20 @@ class ChoiceLogic: GameScene {
 			return
 		}
 		
-		let flag: String? = self.data?["Flag"] as? String
-		let variableToSet = self.data?["VariableToSet"] as? String
-		let variables = self.data?["Variables"] as? [String]
-		if (choice1Node != nil && !choice1Node!.isHidden && choice1Node!.frame.contains(point)) {
+        let flag: String? = (data as! StoryScene).Flag
+        let variableToSet = (data as! StoryScene).VariableToSet
+        for choice in (data as! ChoiceScene).Choices! {
+            if (variableToSet != nil) {
+                self.gameLogic?.variables[variableToSet!] = Bundle.main.localizedString(forKey: choice, value: nil, table: self.gameLogic!.getChapterTable())
+            }
+            if (choice.SkipTo != nil) {
+                self.gameLogic?.setScene(index: choice.SkipTo!)
+            }
+            if (flag != nil) {
+                self.gameLogic?.flags.removeAll(where: { $0 == (flag!) })
+            }
+        }
+		/*if (choice1Node != nil && !choice1Node!.isHidden && choice1Node!.frame.contains(point)) {
 			if (variableToSet != nil && variables != nil) {
 				self.gameLogic?.variables[variableToSet!] = Bundle.main.localizedString(forKey: variables![0], value: nil, table: self.gameLogic!.getChapterTable())
 			}
@@ -147,6 +144,6 @@ class ChoiceLogic: GameScene {
 			if (flag != nil) {
 				self.gameLogic?.flags.removeAll(where: { $0 == (flag!) })
 			}
-		}
+		}*/
 	}
 }

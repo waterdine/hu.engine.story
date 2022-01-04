@@ -18,15 +18,15 @@ class CharacterLogic: GameSubScene {
     var speaker: String = ""
     var speakerImages: [String: SKTexture] = [:]
     
-    public init(gameLogic: GameLogic?, shakeNode: SKNode, startHidden: Bool, data: NSDictionary) {
+    public init(gameLogic: GameLogic?, shakeNode: SKNode, startHidden: Bool, data: BaseScene) {
         super.init(gameLogic: gameLogic)
 
         speakerImageNode = shakeNode.childNode(withName: "//SpeakerImage") as? SKSpriteNode
         
         let speakerRoyalLabel = shakeNode.childNode(withName: "//SpeakerRoyal") as! SKLabelNode
         let speakerLabel = shakeNode.childNode(withName: "//Speaker") as! SKLabelNode
-        isRoyalSpeaker = data["RoyalSpeaker"] as? Bool ?? false
-        let speaker = Bundle.main.localizedString(forKey: ((data["Speaker"] as? String)!), value: nil, table: "Story")
+        isRoyalSpeaker = (data as! StoryScene).RoyalSpeaker ?? false
+        let speaker = Bundle.main.localizedString(forKey: (data as! StoryScene).Speaker, value: nil, table: "Story")
         let font = Bundle.main.localizedString(forKey: "CharacterFontName", value: nil, table: "Story")
         if (isRoyalSpeaker) {
             speakerRoyalLabel.text = speaker
@@ -47,7 +47,7 @@ class CharacterLogic: GameSubScene {
         }
         
         speakerImageNode = shakeNode.childNode(withName: "//SpeakerImage") as? SKSpriteNode
-        let speakerImage: String? = data["SpeakerImage"] as? String
+        let speakerImage: String? = (data as! StoryScene).SpeakerImage
         if (speakerImage != nil) {
             let images = Bundle.main.paths(forResourcesOfType: ".png", inDirectory: "Characters/" + speakerImage!)
             for image in images {
@@ -78,7 +78,7 @@ class CharacterLogic: GameSubScene {
             originalSpeakerY = nil
         }*/ // atode: Must persist
         
-        let imageRotation = data["Rotation"] as? Float
+        let imageRotation = (data as! StoryScene).Rotation
         if (imageRotation != nil) {
             speakerImageNode?.zRotation = CGFloat((Double(imageRotation!) / 180.0) * Double.pi)
             originalSpeakerY = speakerImageNode!.position.y

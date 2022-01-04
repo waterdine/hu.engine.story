@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Flat47Game
 
 class CutSceneScene: VisualScene {
     var Flag: String? = nil
@@ -279,74 +280,14 @@ class StoryScene: CutSceneScene {
     }
 }
 
-class SkipToScene: BaseScene {
-    var SkipTo: Int = 0
-    var Flag: String? = nil
-    
-    enum SkipToCodingKeys: String, CodingKey {
-        case SkipTo
-        case Flag
-    }
-    
-    override init() {
-        super.init()
-    }
-    
-    override init(from scriptParameters: [String : String], strings: inout [String : String]) {
-        super.init(from: scriptParameters, strings: &strings)
-        
-        if (scriptParameters["SkipTo"] != nil) {
-            SkipTo = Int(scriptParameters["SkipTo"]!)!
-        }
-        
-        if (scriptParameters["Flag"] != nil) {
-            Flag = scriptParameters["Flag"]!
-        }
-    }
-    
-    required init(from decoder: Decoder) throws {
-        try super.init(from: decoder)
-        let container = try decoder.container(keyedBy: SkipToCodingKeys.self)
-        SkipTo = try container.decode(Int.self, forKey: SkipToCodingKeys.SkipTo)
-        Flag = try container.decodeIfPresent(String.self, forKey: SkipToCodingKeys.Flag)
-    }
-    
-    override func encode(to encoder: Encoder) throws {
-        try super.encode(to: encoder)
-        var container = encoder.container(keyedBy: SkipToCodingKeys.self)
-        try container.encode(SkipTo, forKey: SkipToCodingKeys.SkipTo)
-        try container.encodeIfPresent(Flag, forKey: SkipToCodingKeys.Flag)
-    }
-    
-    override func getDescription() -> String{
-        return "SkipTo, \(SkipTo)"
-    }
-    
-    override func toScriptHeader(index: Int, strings: [String : String], indexMap: [Int : String]) -> String {
-        var scriptLine: String = super.toScriptHeader(index: index, strings: strings, indexMap: indexMap)
-        
-        if (indexMap[SkipTo] != nil) {
-            scriptLine += ", SkipTo: \(indexMap[SkipTo]!)"
-        } else {
-            scriptLine += ", SkipTo: \(SkipTo)"
-        }
-        
-        if (Flag != nil) {
-            scriptLine += ", Flag: " + Flag!
-        }
-        
-        return scriptLine
-    }
-}
-
-class Choice: Identifiable, Codable {
-    var id: UUID = UUID()
-    var Text: String = ""
-    var SkipTo: Int? = nil
-    var Flag: String? = nil
-    var HideOnFlag: String? = nil
-    var Variable: String? = nil
-    var Break: Bool? = nil
+open class Choice: Identifiable, Codable {
+    public var id: UUID = UUID()
+    public var Text: String = ""
+    public var SkipTo: Int? = nil
+    public var Flag: String? = nil
+    public var HideOnFlag: String? = nil
+    public var Variable: String? = nil
+    public var Break: Bool? = nil
     
     enum ChoiceCodingKeys: String, CodingKey {
         case Text
@@ -385,7 +326,7 @@ class Choice: Identifiable, Codable {
         }
     }
     
-    required init(from decoder: Decoder) throws {
+    public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: ChoiceCodingKeys.self)
         Text = try container.decode(String.self, forKey: ChoiceCodingKeys.Text)
         SkipTo = try container.decodeIfPresent(Int.self, forKey: ChoiceCodingKeys.SkipTo)
@@ -395,7 +336,7 @@ class Choice: Identifiable, Codable {
         Break = try container.decodeIfPresent(Bool.self, forKey: ChoiceCodingKeys.Break)
     }
     
-    func encode(to encoder: Encoder) throws {
+    public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: ChoiceCodingKeys.self)
         try container.encode(Text, forKey: ChoiceCodingKeys.Text)
         try container.encodeIfPresent(SkipTo, forKey: ChoiceCodingKeys.SkipTo)
@@ -609,8 +550,8 @@ class ChoiceScene: VisualScene {
 class ChapterTransitionScene: VisualScene {
     var HorizontalNumber: String = ""
     var HorizontalTitle: String = ""
-    var VerticalNumber: String = ""
-    var VerticalTitle: String = ""
+    var VerticalNumber: String? = nil
+    var VerticalTitle: String? = nil
     var ShowPressToContinue: Bool? = nil
     
     enum ChapterTransitionCodingKeys: String, CodingKey {
@@ -638,8 +579,8 @@ class ChapterTransitionScene: VisualScene {
         let container = try decoder.container(keyedBy: ChapterTransitionCodingKeys.self)
         HorizontalNumber = try container.decode(String.self, forKey: ChapterTransitionCodingKeys.HorizontalNumber)
         HorizontalTitle = try container.decode(String.self, forKey: ChapterTransitionCodingKeys.HorizontalTitle)
-        VerticalNumber = try container.decode(String.self, forKey: ChapterTransitionCodingKeys.VerticalNumber)
-        VerticalTitle = try container.decode(String.self, forKey: ChapterTransitionCodingKeys.VerticalTitle)
+        VerticalNumber = try container.decodeIfPresent(String.self, forKey: ChapterTransitionCodingKeys.VerticalNumber)
+        VerticalTitle = try container.decodeIfPresent(String.self, forKey: ChapterTransitionCodingKeys.VerticalTitle)
         ShowPressToContinue = try container.decodeIfPresent(Bool.self, forKey: ChapterTransitionCodingKeys.ShowPressToContinue)
     }
     
@@ -648,8 +589,8 @@ class ChapterTransitionScene: VisualScene {
         var container = encoder.container(keyedBy: ChapterTransitionCodingKeys.self)
         try container.encode(HorizontalNumber, forKey: ChapterTransitionCodingKeys.HorizontalNumber)
         try container.encode(HorizontalTitle, forKey: ChapterTransitionCodingKeys.HorizontalTitle)
-        try container.encode(VerticalNumber, forKey: ChapterTransitionCodingKeys.VerticalNumber)
-        try container.encode(VerticalTitle, forKey: ChapterTransitionCodingKeys.VerticalTitle)
+        try container.encodeIfPresent(VerticalNumber, forKey: ChapterTransitionCodingKeys.VerticalNumber)
+        try container.encodeIfPresent(VerticalTitle, forKey: ChapterTransitionCodingKeys.VerticalTitle)
         try container.encodeIfPresent(ShowPressToContinue, forKey: ChapterTransitionCodingKeys.ShowPressToContinue)
     }
     
@@ -674,8 +615,8 @@ class ChapterTransitionScene: VisualScene {
         
         lines.append("HorizontalNumber: " + strings[HorizontalNumber]!)
         lines.append("HorizontalTitle: " + strings[HorizontalTitle]!)
-        lines.append("VerticalNumber: " + strings[VerticalNumber]!)
-        lines.append("VerticalTitle: " + strings[VerticalTitle]!)
+        lines.append("VerticalNumber: " + strings[VerticalNumber!]!)
+        lines.append("VerticalTitle: " + strings[VerticalTitle!]!)
         
         return lines
     }

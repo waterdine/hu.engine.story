@@ -123,7 +123,7 @@ open class CutSceneLogic: GameScene {
 		}
 		
 		let storyImage = shakeNode.childNode(withName: "//StoryImage") as? SKSpriteNode
-		let image: String = self.data?["Image"] as! String
+        let image: String = (data as! CutSceneScene).Image
 		let imagePath = Bundle.main.path(forResource: image, ofType: ".png")
 		if (imagePath != nil) {
 			storyImage?.isHidden = false
@@ -132,7 +132,7 @@ open class CutSceneLogic: GameScene {
 			storyImage?.isHidden = true
 		}
 		
-		let imageScale = self.data?["Scale"] as? String
+        let imageScale = (data as! CutSceneScene).Scale
 		var imageScaleFloat: Float? = nil
 		if (imageScale != nil) {
 			imageScaleFloat = Float.init(imageScale!)!
@@ -146,8 +146,8 @@ open class CutSceneLogic: GameScene {
 		}
 		
 		currentOffset = CGSize(width: 0.0, height: 0.0)
-		let imageOffsetX = self.data?["OffsetX"] as? String
-		let imageOffsetY = self.data?["OffsetY"] as? String
+        let imageOffsetX = (data as! CutSceneScene).OffsetX
+        let imageOffsetY = (data as! CutSceneScene).OffsetY
 		var imageOffsetXFloat: Float? = nil
 		if (imageOffsetX != nil) {
 			imageOffsetXFloat = Float.init(imageOffsetX!)
@@ -166,7 +166,7 @@ open class CutSceneLogic: GameScene {
 		
 		wantedOffset = currentOffset
 		
-		let imageRotation = self.data?["Rotation"] as? Float
+        let imageRotation = (data as! CutSceneScene).Rotation
 		if (imageRotation != nil) {
 			storyImage?.shader?.uniformNamed("u_flip")?.floatValue = 1.0
 		} else {
@@ -178,7 +178,7 @@ open class CutSceneLogic: GameScene {
 		storyImage?.shader?.uniformNamed("u_scale")?.floatValue = currentScale
 		storyImage?.shader?.uniformNamed("u_maskTexture")?.textureValue = maskTexture1
 		
-		let storyScene: String? = self.data?["SubScene"] as? String
+        let storyScene: String? = (data as! CutSceneScene).SubScene
 		if (storyScene != nil) {
 			if (storyScene! != currentSubScene) {
 				currentSubScene = storyScene!
@@ -194,14 +194,14 @@ open class CutSceneLogic: GameScene {
 			currentSubScene = ""
 		}
 		
-		let textList: NSArray? = self.data?["Text"] as? NSArray
-		if (textList != nil && textList!.count > 0 && (textList?[0] as! String) == "[instant]") {
+        let textList: [TextLine]? = (data as! CutSceneScene).Text
+        if (textList != nil && textList!.count > 0 && textList?[0].textString == "[instant]") {
 			if (hasMoreText()) {
 				nextText()
 			}
 		}
 		
-		let transitionType: String? = self.data?["Transition"] as? String
+        let transitionType: String? = (data as! CutSceneScene).Transition
 		let cover = shakeNode.childNode(withName: "//Cover") as? SKSpriteNode
 		cover?.alpha = 0.0
 		coverTextLabel?.alpha = 0.0
