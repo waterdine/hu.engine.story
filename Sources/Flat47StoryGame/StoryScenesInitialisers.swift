@@ -1,26 +1,14 @@
 //
-//  StoryScenes.swift
-//  Shared
+//  File.swift
+//  
 //
-//  Created by A. A. Bills on 28/07/2021.
+//  Created by Sen on 05/01/2022.
 //
 
 import Foundation
 import Flat47Game
 
-class CutSceneScene: VisualScene {
-    var Flag: String? = nil
-    var VariableToSet: String? = nil
-    var VariableText: String? = nil
-    var DisableSpeedText: Bool? = nil
-    var SubScene: String? = nil
-    var Image: String = ""
-    var Scale: String? = nil
-    var OffsetX: String? = nil
-    var OffsetY: String? = nil
-    var Rotation: Float? = nil
-    var Text: [TextLine] = []
-    
+class CutSceneSceneSceneInitialiser: SceneInitialiser {
     enum CutSceneCodingKeys: String, CodingKey {
         case Flag
         case VariableToSet
@@ -39,7 +27,7 @@ class CutSceneScene: VisualScene {
         super.init()
     }
     
-    override init(from scriptParameters: [String : String], strings: inout [String : String]) {
+    override init(from scriptParameters: [String : String], strings: inout [String : String]) -> CutSceneScene {
         super.init(from: scriptParameters, strings: &strings)
         
         if (scriptParameters["Flag"] != nil) {

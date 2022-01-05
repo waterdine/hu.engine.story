@@ -21,8 +21,8 @@ public func RegisterStoryGameScenes(gameLogic: GameLogic) {
 	gameLogic.sceneTypes["Story"] = StoryLogic.newScene(gameLogic: gameLogic)
     gameLogic.sceneTypes["CharacterChoice"] = CharacterChoiceLogic.newScene(gameLogic: gameLogic)
 }
-/*
+
 public func RegisterStoryGameScenes(parser: SceneParser) {
-    
+    parser.scene
 }
-*/
+
