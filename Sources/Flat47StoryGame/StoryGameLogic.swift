@@ -9,6 +9,8 @@ import Foundation
 import Flat47Game
 
 // This is a free function because OOP sucks monkey ass and I am not perpetuating that BS any longer ^_^/
+// Do not use OOP, unless you have to use OOP
+// If you have to use OOP, do not meet in groups larger than 6.
 @available(OSX 10.13, *)
 @available(iOS 9.0, *)
 public func RegisterStoryGameScenes(gameLogic: GameLogic) {
@@ -22,7 +24,7 @@ public func RegisterStoryGameScenes(gameLogic: GameLogic) {
     gameLogic.sceneTypes["CharacterChoice"] = CharacterChoiceLogic.newScene(gameLogic: gameLogic)
 }
 
-public func RegisterStoryGameScenes(parser: SceneParser) {
-    parser.scene
+public func RegisterStoryGameSceneInitialisers(sceneListSerialiser: inout SceneListSerialiser) {
+    sceneListSerialiser.serialisers.append(StoryGameSceneSerialiser())
 }
 
