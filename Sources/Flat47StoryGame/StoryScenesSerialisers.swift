@@ -28,12 +28,6 @@ class StoryGameSceneSerialiser: BaseSceneSerialiser {
             case "ChapterTransition":
                 scene = ChapterTransitionScene.init(from: scriptParameters, strings: &strings)
                 break
-            case "DatePuzzle":
-                scene = DatePuzzleScene.init(from: scriptParameters, strings: &strings)
-                break
-            case "ZenPuzzle":
-                scene = ZenPuzzleScene.init(from: scriptParameters, strings: &strings)
-                break
             default:
                 break
         }
@@ -216,10 +210,10 @@ class StoryGameSceneSerialiser: BaseSceneSerialiser {
                     strings[(scene as! ChapterTransitionScene).HorizontalTitle] = text.replacingOccurrences(of: "HorizontalTitle: ", with: "")
                 } else if (text.starts(with: "VerticalNumber")) {
                     (scene as! ChapterTransitionScene).VerticalNumber = chapterNumber + "_vertical_number"
-                    strings[(scene as! ChapterTransitionScene).VerticalNumber] = text.replacingOccurrences(of: "VerticalNumber: ", with: "")
+                    strings[(scene as! ChapterTransitionScene).VerticalNumber!] = text.replacingOccurrences(of: "VerticalNumber: ", with: "")
                 } else if (text.starts(with: "VerticalTitle")) {
                     (scene as! ChapterTransitionScene).VerticalTitle = chapterNumber + "_vertical_title"
-                    strings[(scene as! ChapterTransitionScene).VerticalTitle] = text.replacingOccurrences(of: "VerticalTitle: ", with: "")
+                    strings[(scene as! ChapterTransitionScene).VerticalTitle!] = text.replacingOccurrences(of: "VerticalTitle: ", with: "")
                 }
             default: break
             }
@@ -257,12 +251,17 @@ class StoryGameSceneSerialiser: BaseSceneSerialiser {
                 lines.append(contentsOf: (scene as! ChapterTransitionScene).toStringsLines(index: index, strings: strings))
                 lines.append("\"" + (scene as! ChapterTransitionScene).HorizontalNumber + "\" = \"" + strings[(scene as! ChapterTransitionScene).HorizontalNumber]! + "\";")
                 lines.append("\"" + (scene as! ChapterTransitionScene).HorizontalTitle + "\" = \"" + strings[(scene as! ChapterTransitionScene).HorizontalTitle]! + "\";")
-                lines.append("\"" + (scene as! ChapterTransitionScene).VerticalNumber + "\" = \"" + strings[(scene as! ChapterTransitionScene).VerticalNumber]! + "\";")
-                lines.append("\"" + (scene as! ChapterTransitionScene).VerticalTitle + "\" = \"" + strings[(scene as! ChapterTransitionScene).VerticalTitle]! + "\";")
+                if ((scene as! ChapterTransitionScene).VerticalNumber != nil) {
+                    lines.append("\"" + (scene as! ChapterTransitionScene).VerticalNumber! + "\" = \"" + strings[(scene as! ChapterTransitionScene).VerticalNumber!]! + "\";")
+                }
+                if ((scene as! ChapterTransitionScene).VerticalTitle != nil) {
+                    lines.append("\"" + (scene as! ChapterTransitionScene).VerticalTitle! + "\" = \"" + strings[(scene as! ChapterTransitionScene).VerticalTitle!]! + "\";")
+                }
                 break
             default:
                 break
-            }
+        }
+        return lines
     }
     
     open override func resolveSkipToIndexes(scene: BaseScene, indexMap: [Int : Int]) {
