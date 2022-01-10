@@ -49,10 +49,10 @@ class CharacterLogic: GameSubScene {
         speakerImageNode = shakeNode.childNode(withName: "//SpeakerImage") as? SKSpriteNode
         let speakerImage: String? = (data as! StoryScene).SpeakerImage
         if (speakerImage != nil) {
-            let images = Bundle.main.paths(forResourcesOfType: ".png", inDirectory: "Characters/" + speakerImage!)
-            for image in images {
-                let fileName = URL(string: image)?.lastPathComponent
-                speakerImages[fileName!] = SKTexture(imageNamed: image)
+            let images = Bundle.main.urls(forResourcesWithExtension: ".png", subdirectory: "Characters/" + speakerImage!)
+            for image in images! {
+                let fileName = image.lastPathComponent
+                speakerImages[fileName] = SKTexture(imageNamed: image.path)
             }
             if (speakerImages.count > 0) {
                 let scale = speakerImageNode?.userData!["scale"] as! CGFloat
