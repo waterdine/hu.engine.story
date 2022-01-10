@@ -110,7 +110,7 @@ class StoryLogic: CutSceneLogic {
     override func update(_ currentTime: TimeInterval) {
         super.update(currentTime)
         if (character != nil) {
-            character!.update(currentTime)
+            character!.update(currentTime, animatingText: animatingText)
         }
     }
 	

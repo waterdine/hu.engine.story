@@ -55,7 +55,7 @@ class CharacterLogic: GameSubScene {
                 speakerImages[fileName] = SKTexture(imageNamed: image.path)
             }
             if (speakerImages.count > 0) {
-                let scale = speakerImageNode?.userData!["scale"] as! CGFloat
+                let scale = (speakerImageNode?.userData!["scale"] as! CGFloat) * 0.2
                 let defaultTexture = speakerImages["MouthClosed.png"]
                 if (defaultTexture != nil) {
                     speakerImageNode?.texture = defaultTexture
@@ -114,7 +114,22 @@ class CharacterLogic: GameSubScene {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func update(_ currentTime: TimeInterval) {
+    func update(_ currentTime: TimeInterval, animatingText: Bool) {
+        let mouthClosed = speakerImages["MouthClosed.png"]
+        let mouthOpen = speakerImages["MouthOpen.png"]
+        var newTexture: SKTexture? = speakerImageNode?.texture
+        if (animatingText) {
+            if (currentTime.truncatingRemainder(dividingBy: 2) == 0) {
+                newTexture = mouthOpen
+            } else {
+                newTexture = mouthClosed
+            }
+        } else {
+            newTexture = mouthClosed
+        }
+        if (speakerImageNode?.texture != newTexture) {
+            speakerImageNode?.texture = newTexture
+        }
     }
     
     func processTextCommand(command: String, speakerAreaNode: SKSpriteNode) {
