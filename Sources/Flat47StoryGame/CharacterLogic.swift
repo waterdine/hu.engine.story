@@ -119,7 +119,7 @@ class CharacterLogic: GameSubScene {
         let mouthOpen = speakerImages["MouthOpen.png"]
         var newTexture: SKTexture? = speakerImageNode?.texture
         if (animatingText) {
-            if (currentTime.truncatingRemainder(dividingBy: 2) == 0) {
+            if (sin(currentTime * 10.0) > 0) {
                 newTexture = mouthOpen
             } else {
                 newTexture = mouthClosed
