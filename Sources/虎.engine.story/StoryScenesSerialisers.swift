@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import Flat47Game
+import 虎_engine_base
 
 class StoryGameSceneSerialiser: BaseSceneSerialiser {
     public override init() {

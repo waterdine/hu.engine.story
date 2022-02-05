@@ -1,12 +1,12 @@
 //
 //  FinalChoiceState.swift
-//  Flat47StoryGame iOS
+//  虎.engine.story iOS
 //
 //  Created by A. A. Bills on 11/02/2021.
 //
 
 import SpriteKit
-import Flat47Game
+import 虎_engine_base
 
 @available(OSX 10.13, *)
 @available(iOS 9.0, *)

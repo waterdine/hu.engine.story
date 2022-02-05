@@ -1,13 +1,13 @@
 //
 //  CutSceneState.swift
-//  Flat47StoryGame iOS
+//  虎.engine.story iOS
 //
 //  Created by A. A. Bills on 11/02/2021.
 //
 
 import AVKit
 import SpriteKit
-import Flat47Game
+import 虎_engine_base
 
 #if os(OSX)
 typealias UIColor = NSColor
