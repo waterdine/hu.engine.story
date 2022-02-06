@@ -63,7 +63,7 @@ class CharacterLogic: GameSubScene {
                 }
             }
             if (speakerImages.count > 0) {
-                let scale = (speakerImageNode?.userData!["scale"] as! CGFloat) * 0.2
+                let scale = (speakerImageNode?.userData!["scale"] as! CGFloat)
                 let defaultTexture = speakerImages["MouthClosed.png"]
                 if (defaultTexture != nil) {
                     speakerImageNode?.texture = defaultTexture
