@@ -25,6 +25,7 @@ open class CutSceneLogic: GameScene {
 	var currentTextSpeed: Double = 0.0
 	var speedingText: Bool = false
 	var disableSpeedingText: Bool = false
+    var textSpeechPause: Bool = false
 	
 	var fixedText: String = ""
 	var newText: String = ""
@@ -106,6 +107,7 @@ open class CutSceneLogic: GameScene {
 		lastTextChange = 0.0
 		lastAnimationCompleteTime = 0.0
 		animatingText = false
+        textSpeechPause = false
 		currentTextSpeed = self.gameLogic!.textFadeTime
 		speedingText = false
 		readyForNextScene = false
@@ -396,6 +398,7 @@ open class CutSceneLogic: GameScene {
 					let fadingCharacterAlpha = deltaFadeTime - Double(Int(deltaFadeTime))
 					
 					var fakeIndex = 0
+                    var lastRevealedCharacter: Character = Character.init("")
 					for index: Int in 0 ... newText.count - 1 {
 						let indexFadeStartTime = Double(fakeIndex) * textFadeTime
 						let characterAlpha = (delta >= indexFadeStartTime + textFadeTime) ? 1.0 : (delta < indexFadeStartTime) ? 0.0 : fadingCharacterAlpha
@@ -412,15 +415,22 @@ open class CutSceneLogic: GameScene {
 						} else {
 							fakeIndex += 1
 						}
+                        
 						let attributedCharacterString: NSAttributedString = NSAttributedString(string: String(character), attributes: attributes)
 						string.append(attributedCharacterString)
 						let coverAttributedCharacterString: NSAttributedString = NSAttributedString(string: String(character), attributes: coverAttributes)
 						coverString.append(coverAttributedCharacterString)
 						
+                        if (characterAlpha != 0.0) {
+                            lastRevealedCharacter = character
+                        }
+                        
 						if (characterAlpha == 1.0) {
 							remainingCharacters -= 1
 						}
 					}
+                    
+                    textSpeechPause = (lastRevealedCharacter == "," || lastRevealedCharacter == "." || lastRevealedCharacter == ";")
 				}
 			}
 			
@@ -448,6 +458,7 @@ open class CutSceneLogic: GameScene {
 			if (remainingCharacters == 0) {
 				lastAnimationCompleteTime = currentTime
 				animatingText = false
+                textSpeechPause = false
 			}
 		}
 		

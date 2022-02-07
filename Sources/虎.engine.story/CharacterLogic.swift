@@ -123,12 +123,12 @@ class CharacterLogic: GameSubScene {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func update(_ currentTime: TimeInterval, animatingText: Bool) {
+    func update(_ currentTime: TimeInterval, animatingText: Bool, textSpeechPause: Bool) {
         if (enableMouth) {
             let mouthClosed = speakerImages["MouthClosed.png"]
             let mouthOpen = speakerImages["MouthOpen.png"]
             var newTexture: SKTexture? = speakerImageNode?.texture
-            if (animatingText) {
+            if (animatingText && !textSpeechPause) {
                 let stretchedTime = currentTime * 20
                 let sqrt3 = sqrt(3)
                 let sqrt5 = sqrt(5)
