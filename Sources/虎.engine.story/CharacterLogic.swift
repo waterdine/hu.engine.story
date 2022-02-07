@@ -2,7 +2,7 @@
 //  StoryState.swift
 //  虎.engine.story iOS
 //
-//  Created by A. A. Bills on 11/02/2021.
+//  Created by ito.antonia on 11/02/2021.
 //
 
 import SpriteKit
