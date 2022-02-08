@@ -41,7 +41,7 @@ class ChoiceLogic: GameScene {
 		
         //let hideOnFlags = (data as! ChoiceScene).HideOnFlag
 		let directionLabel = self.childNode(withName: "//DirectingLabel") as? SKLabelNode
-        directionLabel!.text = Bundle.main.localizedString(forKey: (data as! ChoiceScene).DirectingText, value: nil, table: self.gameLogic!.getChapterTable())
+        directionLabel!.text = gameLogic!.localizedString(forKey: (data as! ChoiceScene).DirectingText, value: nil, table: self.gameLogic!.getChapterTable())
         
         for choiceNode in choiceNodes {
             choiceNode.isHidden = true
@@ -56,7 +56,7 @@ class ChoiceLogic: GameScene {
             if (choiceLabels.count > index) {
                 let choiceLabel = choiceLabels[index]
                 let choiceNode = choiceNodes[index]
-                choiceLabel.text = Bundle.main.localizedString(forKey: choice.Text, value: nil, table: self.gameLogic!.getChapterTable())
+                choiceLabel.text = gameLogic!.localizedString(forKey: choice.Text, value: nil, table: self.gameLogic!.getChapterTable())
                 choiceLabel.text = self.gameLogic!.unwrapVariables(text: choiceLabel.text!)
                 /*if (choice3Node != nil) {
                     choiceNode?.size.height = max(choiceNode!.frame.height, choiceLabel!.frame.height)
@@ -96,7 +96,7 @@ class ChoiceLogic: GameScene {
         let variableToSet = (data as! StoryScene).VariableToSet
         for choice in (data as! ChoiceScene).Choices! {
             if (variableToSet != nil) {
-                self.gameLogic?.variables[variableToSet!] = Bundle.main.localizedString(forKey: choice.Text, value: nil, table: self.gameLogic!.getChapterTable())
+                self.gameLogic?.variables[variableToSet!] = gameLogic!.localizedString(forKey: choice.Text, value: nil, table: self.gameLogic!.getChapterTable())
             }
             if (choice.SkipTo != nil) {
                 self.gameLogic?.setScene(index: choice.SkipTo!)
@@ -107,7 +107,7 @@ class ChoiceLogic: GameScene {
         }
 		/*if (choice1Node != nil && !choice1Node!.isHidden && choice1Node!.frame.contains(point)) {
 			if (variableToSet != nil && variables != nil) {
-				self.gameLogic?.variables[variableToSet!] = Bundle.main.localizedString(forKey: variables![0], value: nil, table: self.gameLogic!.getChapterTable())
+				self.gameLogic?.variables[variableToSet!] = gameLogic!.localizedString(forKey: variables![0], value: nil, table: self.gameLogic!.getChapterTable())
 			}
 			self.gameLogic?.nextScene()
 			if (flag != nil) {
@@ -115,7 +115,7 @@ class ChoiceLogic: GameScene {
 			}
 		} else if (choice2Node != nil && !choice2Node!.isHidden && choice2Node!.frame.contains(point)) {
 			if (variableToSet != nil && variables != nil) {
-				self.gameLogic?.variables[variableToSet!] = Bundle.main.localizedString(forKey: variables![1], value: nil, table: self.gameLogic!.getChapterTable())
+				self.gameLogic?.variables[variableToSet!] = gameLogic!.localizedString(forKey: variables![1], value: nil, table: self.gameLogic!.getChapterTable())
 			}
 			let skipToSceneList = self.data?["SkipTo"] as? [Int]
 			if (skipToSceneList != nil) {
@@ -128,7 +128,7 @@ class ChoiceLogic: GameScene {
 			}
 		} else if (choice3Node != nil && !choice3Node!.isHidden && choice3Node!.frame.contains(point)) {
 			if (variableToSet != nil && variables != nil) {
-				self.gameLogic?.variables[variableToSet!] = Bundle.main.localizedString(forKey: variables![2], value: nil, table: self.gameLogic!.getChapterTable())
+				self.gameLogic?.variables[variableToSet!] = gameLogic!.localizedString(forKey: variables![2], value: nil, table: self.gameLogic!.getChapterTable())
 			}
 			let skipToSceneList = self.data?["SkipTo"] as! [Int]
 			self.gameLogic?.setScene(index: skipToSceneList[1])
@@ -137,7 +137,7 @@ class ChoiceLogic: GameScene {
 			}
 		} else if (choice4Node != nil && !choice4Node!.isHidden && choice4Node!.frame.contains(point)) {
 			if (variableToSet != nil && variables != nil) {
-				self.gameLogic?.variables[variableToSet!] = Bundle.main.localizedString(forKey: variables![3], value: nil, table: self.gameLogic!.getChapterTable())
+				self.gameLogic?.variables[variableToSet!] = gameLogic!.localizedString(forKey: variables![3], value: nil, table: self.gameLogic!.getChapterTable())
 			}
 			let skipToSceneList = self.data?["SkipTo"] as! [Int]
 			self.gameLogic?.setScene(index: skipToSceneList[2])

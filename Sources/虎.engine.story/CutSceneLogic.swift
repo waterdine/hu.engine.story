@@ -65,7 +65,7 @@ open class CutSceneLogic: GameScene {
 		scene.scaleMode = gameLogic.getScaleMode()
 		scene.gameLogic = gameLogic
 		scene.requiresMusic = true
-        let fontSizeScale: CGFloat = CGFloat(Float.init(Bundle.main.localizedString(forKey: "FontScale", value: nil, table: "Story"))!)
+        let fontSizeScale: CGFloat = CGFloat(Float.init(gameLogic!.localizedString(forKey: "FontScale", value: nil, table: "Story"))!)
         let coverTextLabel = scene.childNode(withName: "//CoverText") as? SKLabelNode
         coverTextLabel?.fontSize = coverTextLabel!.fontSize * fontSizeScale
         let textLabel = scene.childNode(withName: "//Text") as? SKLabelNode
@@ -89,12 +89,12 @@ open class CutSceneLogic: GameScene {
 		}
 		let coverTextLabel = shakeNode.childNode(withName: "//CoverText") as? SKLabelNode
 		coverTextLabel?.alpha = 0.0
-        coverTextLabel?.fontName = Bundle.main.localizedString(forKey: "FontName", value: nil, table: "Story")
+        coverTextLabel?.fontName = gameLogic!.localizedString(forKey: "FontName", value: nil, table: "Story")
 		let textLabel = shakeNode.childNode(withName: "//Text") as? SKLabelNode
 		textLabel!.alpha = 1.0
-        textLabel?.fontName = Bundle.main.localizedString(forKey: "FontName", value: nil, table: "Story")
+        textLabel?.fontName = gameLogic!.localizedString(forKey: "FontName", value: nil, table: "Story")
         let centerTextLabel = shakeNode.childNode(withName: "//CenterText") as? SKLabelNode
-        centerTextLabel?.fontName = Bundle.main.localizedString(forKey: "FontName", value: nil, table: "Story")
+        centerTextLabel?.fontName = gameLogic!.localizedString(forKey: "FontName", value: nil, table: "Story")
 		fixedText = ""
 		newText = ""
         if #available(iOS 11.0, *) {
@@ -226,7 +226,7 @@ open class CutSceneLogic: GameScene {
 		let variableToSet = (data as! CutSceneScene).VariableToSet
 		let variableText = (data as! CutSceneScene).VariableText
 		if (variableToSet != nil && variableText != nil) {
-			self.gameLogic?.variables[variableToSet!] = Bundle.main.localizedString(forKey: variableText!, value: nil, table: self.gameLogic!.getChapterTable())
+			self.gameLogic?.variables[variableToSet!] = gameLogic!.localizedString(forKey: variableText!, value: nil, table: self.gameLogic!.getChapterTable())
 		}
 		let flag = (data as! CutSceneScene).Flag
 		if (flag != nil) {
@@ -774,7 +774,7 @@ open class CutSceneLogic: GameScene {
 			} else if (fixedText != "" && fixedText != "\t" && !skipIndent) {
 				newText += "\t"
 			}
-			var nextLine = Bundle.main.localizedString(forKey: (textList[self.currentTextIndex].textString), value: nil, table: self.gameLogic!.getChapterTable())
+			var nextLine = gameLogic!.localizedString(forKey: (textList[self.currentTextIndex].textString), value: nil, table: self.gameLogic!.getChapterTable())
 			nextLine = self.gameLogic!.unwrapVariables(text: nextLine)
 			newText += nextLine
 		}

@@ -33,7 +33,7 @@ case "RandomChoice":
 	let variableTextLookups: [String] = sceneData?["VariableText"] as! [String]
 	let index = Int.random(in: 0 ... possibleFlags.count - 1)
 	
-	let variableText = Bundle.main.localizedString(forKey: variableTextLookups[index], value: nil, table: getChapterTable())
+	let variableText = gameLogic!.localizedString(forKey: variableTextLookups[index], value: nil, table: getChapterTable())
 	variables[variableName] = variableText
 	flags.append(possibleFlags[index])
 	

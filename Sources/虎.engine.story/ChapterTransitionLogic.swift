@@ -28,20 +28,20 @@ class ChapterTransitionLogic: GameScene {
 	override func didMove(to view: SKView) {
 		super.didMove(to: view)
 		let horizontalNumberLabel = self.childNode(withName: "//HorizontalNumber") as? SKLabelNode
-        horizontalNumberLabel?.text = Bundle.main.localizedString(forKey: (data as! ChapterTransitionScene).HorizontalNumber, value: nil, table: self.gameLogic!.getChapterTable())
+        horizontalNumberLabel?.text = gameLogic!.localizedString(forKey: (data as! ChapterTransitionScene).HorizontalNumber, value: nil, table: self.gameLogic!.getChapterTable())
 		let horizontalTitleLabel = self.childNode(withName: "//HorizontalTitle") as? SKLabelNode
-		horizontalTitleLabel?.text = Bundle.main.localizedString(forKey: (data as! ChapterTransitionScene).HorizontalTitle, value: nil, table: self.gameLogic!.getChapterTable())
+		horizontalTitleLabel?.text = gameLogic!.localizedString(forKey: (data as! ChapterTransitionScene).HorizontalTitle, value: nil, table: self.gameLogic!.getChapterTable())
 		let verticalNumberLabel = self.childNode(withName: "//VerticalNumber") as? SKLabelNode
 		if ((data as! ChapterTransitionScene).VerticalNumber != nil) {
-			verticalNumberLabel?.text = Bundle.main.localizedString(forKey: (data as! ChapterTransitionScene).VerticalNumber!, value: nil, table: self.gameLogic!.getChapterTable())
+			verticalNumberLabel?.text = gameLogic!.localizedString(forKey: (data as! ChapterTransitionScene).VerticalNumber!, value: nil, table: self.gameLogic!.getChapterTable())
 		}
 		let verticalTitleLabel = self.childNode(withName: "//VerticalTitle") as? SKLabelNode
 		if ((data as! ChapterTransitionScene).VerticalTitle != nil) {
-			verticalTitleLabel?.text = Bundle.main.localizedString(forKey: (data as! ChapterTransitionScene).VerticalTitle!, value: nil, table: self.gameLogic!.getChapterTable())
+			verticalTitleLabel?.text = gameLogic!.localizedString(forKey: (data as! ChapterTransitionScene).VerticalTitle!, value: nil, table: self.gameLogic!.getChapterTable())
 		}
         let showPressToContinue = (data as! ChapterTransitionScene).ShowPressToContinue
 		let pressNode = self.childNode(withName: "//Press") as? SKLabelNode
 		pressNode?.isHidden = (showPressToContinue == nil || showPressToContinue! == false)
-        pressNode?.text = Bundle.main.localizedString(forKey: "Press to continue...", value: nil, table: "Story")
+        pressNode?.text = gameLogic!.localizedString(forKey: "Press to continue...", value: nil, table: "Story")
 	}
 }

@@ -27,8 +27,8 @@ class CharacterLogic: GameSubScene {
         let speakerRoyalLabel = shakeNode.childNode(withName: "//SpeakerRoyal") as! SKLabelNode
         let speakerLabel = shakeNode.childNode(withName: "//Speaker") as! SKLabelNode
         isRoyalSpeaker = (data as! StoryScene).RoyalSpeaker ?? false
-        let speaker = Bundle.main.localizedString(forKey: (data as! StoryScene).Speaker, value: nil, table: "Story")
-        let font = Bundle.main.localizedString(forKey: "CharacterFontName", value: nil, table: "Story")
+        let speaker = gameLogic!.localizedString(forKey: (data as! StoryScene).Speaker, value: nil, table: "Story")
+        let font = gameLogic!.localizedString(forKey: "CharacterFontName", value: nil, table: "Story")
         if (isRoyalSpeaker) {
             speakerRoyalLabel.text = speaker
             speakerRoyalLabel.fontName = font

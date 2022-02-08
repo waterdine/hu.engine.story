@@ -26,7 +26,7 @@ class StoryLogic: CutSceneLogic {
 		scene.gameLogic = gameLogic
 		scene.stickyText = false
 		scene.requiresMusic = true
-        let fontSizeScale: CGFloat = CGFloat(Float.init(Bundle.main.localizedString(forKey: "CharacterFontScale", value: nil, table: "Story"))!)
+        let fontSizeScale: CGFloat = CGFloat(Float.init(gameLogic!.localizedString(forKey: "CharacterFontScale", value: nil, table: "Story"))!)
         let textLabel = scene.childNode(withName: "//Text") as? SKLabelNode
         textLabel?.fontSize = textLabel!.fontSize * fontSizeScale
 		
@@ -46,7 +46,7 @@ class StoryLogic: CutSceneLogic {
         
 		let speakerRoyalLabel = shakeNode.childNode(withName: "//SpeakerRoyal") as! SKLabelNode
 		let speakerLabel = shakeNode.childNode(withName: "//Speaker") as! SKLabelNode
-        let font = Bundle.main.localizedString(forKey: "CharacterFontName", value: nil, table: "Story")
+        let font = gameLogic!.localizedString(forKey: "CharacterFontName", value: nil, table: "Story")
         if (character!.isRoyalSpeaker) {
             speakerRoyalLabel.text = character!.speaker
             speakerRoyalLabel.fontName = font
