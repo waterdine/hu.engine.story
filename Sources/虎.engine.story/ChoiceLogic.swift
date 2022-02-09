@@ -94,56 +94,27 @@ class ChoiceLogic: GameScene {
 		
         let flag: String? = (data as! StoryScene).Flag
         let variableToSet = (data as! StoryScene).VariableToSet
-        for choice in (data as! ChoiceScene).Choices! {
-            if (variableToSet != nil) {
-                self.gameLogic?.variables[variableToSet!] = gameLogic!.localizedString(forKey: choice.Text, value: nil, table: self.gameLogic!.getChapterTable())
-            }
-            if (choice.SkipTo != nil) {
-                self.gameLogic?.setScene(index: choice.SkipTo!)
-            }
-            if (flag != nil) {
-                self.gameLogic?.flags.removeAll(where: { $0 == (flag!) })
+        for (index, choice) in (data as! ChoiceScene).Choices!.enumerated() {
+            if (choiceNodes.count > index) {
+                let choiceNode = choiceNodes[index]
+                if (!choiceNode.isHidden && choiceNode.frame.contains(point)) {
+                    if (variableToSet != nil) {
+                        self.gameLogic?.variables[variableToSet!] = gameLogic!.localizedString(forKey: choice.Text, value: nil, table: self.gameLogic!.getChapterTable())
+                    }
+                    if (choice.SkipTo != nil) {
+                        self.gameLogic?.setScene(index: choice.SkipTo!)
+                    } else {
+                        self.gameLogic?.nextScene()
+                    }
+                    if (flag != nil) {
+                        if (index == 0) {
+                            self.gameLogic?.flags.append(flag!)
+                        } else {
+                            self.gameLogic?.flags.removeAll(where: { $0 == (flag!) })
+                        }
+                    }
+                }
             }
         }
-		/*if (choice1Node != nil && !choice1Node!.isHidden && choice1Node!.frame.contains(point)) {
-			if (variableToSet != nil && variables != nil) {
-				self.gameLogic?.variables[variableToSet!] = gameLogic!.localizedString(forKey: variables![0], value: nil, table: self.gameLogic!.getChapterTable())
-			}
-			self.gameLogic?.nextScene()
-			if (flag != nil) {
-				self.gameLogic?.flags.append(flag!)
-			}
-		} else if (choice2Node != nil && !choice2Node!.isHidden && choice2Node!.frame.contains(point)) {
-			if (variableToSet != nil && variables != nil) {
-				self.gameLogic?.variables[variableToSet!] = gameLogic!.localizedString(forKey: variables![1], value: nil, table: self.gameLogic!.getChapterTable())
-			}
-			let skipToSceneList = self.data?["SkipTo"] as? [Int]
-			if (skipToSceneList != nil) {
-				self.gameLogic?.setScene(index: skipToSceneList![0])
-			} else {
-				self.gameLogic?.setScene(index: self.data?["SkipTo"] as! Int)
-			}
-			if (flag != nil) {
-				self.gameLogic?.flags.removeAll(where: { $0 == (flag!) })
-			}
-		} else if (choice3Node != nil && !choice3Node!.isHidden && choice3Node!.frame.contains(point)) {
-			if (variableToSet != nil && variables != nil) {
-				self.gameLogic?.variables[variableToSet!] = gameLogic!.localizedString(forKey: variables![2], value: nil, table: self.gameLogic!.getChapterTable())
-			}
-			let skipToSceneList = self.data?["SkipTo"] as! [Int]
-			self.gameLogic?.setScene(index: skipToSceneList[1])
-			if (flag != nil) {
-				self.gameLogic?.flags.removeAll(where: { $0 == (flag!) })
-			}
-		} else if (choice4Node != nil && !choice4Node!.isHidden && choice4Node!.frame.contains(point)) {
-			if (variableToSet != nil && variables != nil) {
-				self.gameLogic?.variables[variableToSet!] = gameLogic!.localizedString(forKey: variables![3], value: nil, table: self.gameLogic!.getChapterTable())
-			}
-			let skipToSceneList = self.data?["SkipTo"] as! [Int]
-			self.gameLogic?.setScene(index: skipToSceneList[2])
-			if (flag != nil) {
-				self.gameLogic?.flags.removeAll(where: { $0 == (flag!) })
-			}
-		}*/
 	}
 }
