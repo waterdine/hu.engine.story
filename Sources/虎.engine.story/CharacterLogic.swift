@@ -66,6 +66,7 @@ class CharacterLogic: GameSubScene {
                     let texture = SKTexture(imageNamed: image.path)
                     texture.usesMipmaps = true
                     speakerImages[fileName] = SKSpriteNode.init(texture: texture)
+                    //speakerImageNode?.size = CGSize(width: (speakerImageNode?.texture?.size())!.width, height: (speakerImageNode?.texture?.size())!.height)
                     speakerImageNode?.addChild(speakerImages[fileName]!)
                 }
             }
@@ -74,7 +75,8 @@ class CharacterLogic: GameSubScene {
                 let defaultTexture = speakerImages["MouthClosed.png"]
                 if (defaultTexture != nil) {
                     speakerImageNode?.isHidden = false
-                    speakerImageNode?.setScale(speakerImageNode!.xScale * scale)
+                    speakerImageNode?.size = CGSize(width: 4096, height: 4096)
+                    speakerImageNode?.setScale(0.2)
                     speakerImageNode?.alpha = 1.0
                     speakerImageNode?.position.x = speakerAreaNode!.position.x
                 } else {
