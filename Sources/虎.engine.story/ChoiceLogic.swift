@@ -71,7 +71,7 @@ class ChoiceLogic: GameScene {
 		}*/
 		
 		let storyImage = self.childNode(withName: "//StoryImage") as? SKSpriteNode
-        let image: String = (data as! StoryScene).Image
+        let image: String = (data as! ChoiceScene).Image
 		let imagePath = Bundle.main.path(forResource: image, ofType: ".png")
 		if (imagePath != nil) {
 			storyImage?.isHidden = false
