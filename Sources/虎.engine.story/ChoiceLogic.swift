@@ -92,8 +92,8 @@ class ChoiceLogic: GameScene {
 			return
 		}
 		
-        let flag: String? = (data as! StoryScene).Flag
-        let variableToSet = (data as! StoryScene).VariableToSet
+        let flag: String? = (data as! ChoiceScene).Flag
+        let variableToSet = (data as! ChoiceScene).VariableToSet
         for (index, choice) in (data as! ChoiceScene).Choices!.enumerated() {
             if (choiceNodes.count > index) {
                 let choiceNode = choiceNodes[index]
@@ -112,6 +112,9 @@ class ChoiceLogic: GameScene {
                         } else {
                             self.gameLogic?.flags.removeAll(where: { $0 == (flag!) })
                         }
+                    }
+                    if (choice.Flag != nil) {
+                        self.gameLogic?.flags.append(choice.Flag!)
                     }
                 }
             }
