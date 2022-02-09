@@ -55,11 +55,13 @@ class CharacterLogic: GameSubScene {
                 let image = Bundle.main.url(forResource: speakerImage!, withExtension: ".png")
                 if (image != nil) {
                     speakerImages["MouthClosed.png"] = SKTexture(imageNamed: image!.path)
+                    speakerImages["MouthClosed.png"]?.usesMipmaps = true
                 }
             } else {
                 for image in images! {
                     let fileName = image.lastPathComponent
                     speakerImages[fileName] = SKTexture(imageNamed: image.path)
+                    speakerImages[fileName]?.usesMipmaps = true
                 }
             }
             if (speakerImages.count > 0) {
