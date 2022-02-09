@@ -30,14 +30,14 @@ class ChoiceLogic: GameScene {
 	
 	override func didMove(to view: SKView) {
 		super.didMove(to: view)
-        choiceNodes.append(self.childNode(withName: "//Choice1") as! SKSpriteNode)
-        choiceNodes.append(self.childNode(withName: "//Choice2") as! SKSpriteNode)
-        choiceNodes.append(self.childNode(withName: "//Choice3") as! SKSpriteNode)
-        choiceNodes.append(self.childNode(withName: "//Choice4") as! SKSpriteNode)
-        choiceLabels.append(self.childNode(withName: "//Choice1Label") as! SKLabelNode)
-        choiceLabels.append(self.childNode(withName: "//Choice2Label") as! SKLabelNode)
-        choiceLabels.append(self.childNode(withName: "//Choice3Label") as! SKLabelNode)
-        choiceLabels.append(self.childNode(withName: "//Choice4Label") as! SKLabelNode)
+        for index in 0 ... 10 {
+            let spriteNode = self.childNode(withName: "//Choice\(index)") as? SKSpriteNode
+            let labelNode = self.childNode(withName: "//Choice\(index)Label") as? SKLabelNode
+            if (spriteNode != nil && labelNode != nil) {
+                choiceNodes.append(spriteNode!)
+                choiceLabels.append(labelNode!)
+            }
+        }
 		
         //let hideOnFlags = (data as! ChoiceScene).HideOnFlag
 		let directionLabel = self.childNode(withName: "//DirectingLabel") as? SKLabelNode
