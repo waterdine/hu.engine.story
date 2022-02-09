@@ -70,7 +70,9 @@ class CharacterLogic: GameSubScene {
                 if (defaultTexture != nil) {
                     speakerImageNode?.texture = defaultTexture
                     speakerImageNode?.isHidden = false
-                    speakerImageNode?.size = CGSize(width: (speakerImageNode?.texture?.size())!.width * scale, height: (speakerImageNode?.texture?.size())!.height * scale)
+                    speakerImageNode?.xScale = scale
+                    speakerImageNode?.yScale = scale
+                    speakerImageNode?.size = CGSize(width: (speakerImageNode?.texture?.size())!.width, height: (speakerImageNode?.texture?.size())!.height)
                     speakerImageNode?.alpha = 1.0
                     speakerImageNode?.position.x = speakerAreaNode!.position.x
                 } else {
