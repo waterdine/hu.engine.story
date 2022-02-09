@@ -16,7 +16,7 @@ class CharacterLogic: GameSubScene {
     var speakerImageNode: SKSpriteNode? = nil
     var isRoyalSpeaker: Bool = false
     var speaker: String = ""
-    var speakerImages: [String: SKSpriteNode] = [:]
+    var speakerImages: [String: SKTexture] = [:]
     var enableMouth: Bool = false
     
     public init(gameLogic: GameLogic?, shakeNode: SKNode, startHidden: Bool, data: BaseScene) {
@@ -48,35 +48,30 @@ class CharacterLogic: GameSubScene {
         }
         
         speakerImageNode = shakeNode.childNode(withName: "//SpeakerImage") as? SKSpriteNode
-        speakerImageNode?.removeAllChildren()
         let speakerImage: String? = (data as! StoryScene).SpeakerImage
         if (speakerImage != nil) {
             let images = Bundle.main.urls(forResourcesWithExtension: ".png", subdirectory: "Characters/" + speakerImage!)
             if (images!.isEmpty) {
                 let image = Bundle.main.url(forResource: speakerImage!, withExtension: ".png")
                 if (image != nil) {
-                    let texture = SKTexture(imageNamed: image!.path)
-                    texture.usesMipmaps = true
-                    speakerImages["MouthClosed.png"] = SKSpriteNode.init(texture: texture)
-                    speakerImageNode?.addChild(speakerImages["MouthClosed.png"]!)
+                    speakerImages["MouthClosed.png"] = SKTexture(imageNamed: image!.path)
+                    speakerImages["MouthClosed.png"]?.usesMipmaps = true
                 }
             } else {
                 for image in images! {
                     let fileName = image.lastPathComponent
-                    let texture = SKTexture(imageNamed: image.path)
-                    texture.usesMipmaps = true
-                    speakerImages[fileName] = SKSpriteNode.init(texture: texture)
-                    //speakerImageNode?.size = CGSize(width: (speakerImageNode?.texture?.size())!.width, height: (speakerImageNode?.texture?.size())!.height)
-                    speakerImageNode?.addChild(speakerImages[fileName]!)
+                    speakerImages[fileName] = SKTexture(imageNamed: image.path)
+                    speakerImages[fileName]?.usesMipmaps = true
                 }
             }
             if (speakerImages.count > 0) {
                 let scale = (speakerImageNode?.userData!["scale"] as! CGFloat)
                 let defaultTexture = speakerImages["MouthClosed.png"]
                 if (defaultTexture != nil) {
+                    speakerImageNode?.texture = defaultTexture
                     speakerImageNode?.isHidden = false
-                    speakerImageNode?.size = CGSize(width: 4096, height: 4096)
-                    speakerImageNode?.setScale(0.2)
+                    speakerImageNode?.size = CGSize(width: (speakerImageNode?.texture?.size())!.width, height: (speakerImageNode?.texture?.size())!.height)
+                    speakerImageNode?.setScale(speakerImageNode!.xScale * scale)
                     speakerImageNode?.alpha = 1.0
                     speakerImageNode?.position.x = speakerAreaNode!.position.x
                 } else {
@@ -135,20 +130,21 @@ class CharacterLogic: GameSubScene {
         if (enableMouth) {
             let mouthClosed = speakerImages["MouthClosed.png"]
             let mouthOpen = speakerImages["MouthOpen.png"]
+            var newTexture: SKTexture? = speakerImageNode?.texture
             if (animatingText && !textSpeechPause) {
                 let stretchedTime = currentTime * 20
                 let sqrt3 = sqrt(3)
                 let sqrt5 = sqrt(5)
                 if ((sin(stretchedTime) + cos(sqrt3 * stretchedTime) + cos(sqrt5 * stretchedTime)) > 0) {
-                    mouthOpen?.isHidden = false
-                    mouthClosed?.isHidden = true
+                    newTexture = mouthOpen
                 } else {
-                    mouthOpen?.isHidden = true
-                    mouthClosed?.isHidden = false
+                    newTexture = mouthClosed
                 }
             } else {
-                mouthOpen?.isHidden = true
-                mouthClosed?.isHidden = false
+                newTexture = mouthClosed
+            }
+            if (speakerImageNode?.texture != newTexture) {
+                speakerImageNode?.texture = newTexture
             }
         }
     }
