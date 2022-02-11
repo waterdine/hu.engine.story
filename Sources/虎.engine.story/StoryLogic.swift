@@ -17,7 +17,7 @@ class StoryLogic: CutSceneLogic {
     var character: CharacterLogic? = nil
 	
 	override class func newScene(gameLogic: GameLogic) -> StoryLogic {
-		guard let scene = StoryLogic(fileNamed: "Story" + gameLogic.getAspectSuffix()) else {
+		guard let scene = StoryLogic(fileNamed: gameLogic.loadUrl(forResource: "Default.Story" + gameLogic.getAspectSuffix(), withExtension: ".sks", subdirectory: "Scenes/" + gameLogic.getAspectSuffix())!.path) else {
 			print("Failed to load Story.sks")
 			abort()
 		}
