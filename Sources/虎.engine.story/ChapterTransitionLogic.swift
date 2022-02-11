@@ -13,7 +13,7 @@ import 虎_engine_base
 class ChapterTransitionLogic: GameScene {
 	
 	class func newScene(gameLogic: GameLogic) -> ChapterTransitionLogic {
-        guard let scene = ChapterTransitionLogic(fileNamed: gameLogic.loadUrl(forResource: "Default.ChapterTransition" + gameLogic.getAspectSuffix(), withExtension: ".sks", subdirectory: "Scenes/" + gameLogic.getAspectSuffix())!.path) else {
+        guard let scene = ChapterTransitionLogic(fileNamed: gameLogic.loadUrl(forResource: gameLogic.appendAspectSuffix(scene: "Default.ChapterTransition"), withExtension: ".sks", subdirectory: "Scenes/" + gameLogic.getAspectSuffix())!.path) else {
 			print("Failed to load ChapterTransition.sks")
 			abort()
 		}

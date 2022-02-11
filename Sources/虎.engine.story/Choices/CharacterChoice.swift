@@ -33,7 +33,7 @@ class CharacterChoiceLogic: GameScene, UITextFieldDelegate {
 	var catType: CatType = .None
 	
 	class func newScene(gameLogic: GameLogic) -> CharacterChoiceLogic {
-		guard let scene = CharacterChoiceLogic(fileNamed: gameLogic.loadUrl(forResource: "Default.CharacterChoice" + gameLogic.getAspectSuffix(), withExtension: ".sks", subdirectory: "Scenes/" + gameLogic.getAspectSuffix())!.path) else {
+        guard let scene = CharacterChoiceLogic(fileNamed: gameLogic.loadUrl(forResource: gameLogic.appendAspectSuffix(scene: "Default.CharacterChoice"), withExtension: ".sks", subdirectory: "Scenes/" + gameLogic.getAspectSuffix())!.path) else {
 			print("Failed to load CharacterChoice.sks")
             return CharacterChoiceLogic()
 		}

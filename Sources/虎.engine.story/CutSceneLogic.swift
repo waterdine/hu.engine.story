@@ -57,7 +57,7 @@ open class CutSceneLogic: GameScene {
 	var maskTexture2: SKTexture? = nil
 	
 	class func newScene(gameLogic: GameLogic) -> CutSceneLogic {
-        guard let scene = CutSceneLogic(fileNamed: gameLogic.loadUrl(forResource: "Default.CutScene" + gameLogic.getAspectSuffix(), withExtension: ".sks", subdirectory: "Scenes/" + gameLogic.getAspectSuffix())!.path) else {
+        guard let scene = CutSceneLogic(fileNamed: gameLogic.loadUrl(forResource: gameLogic.appendAspectSuffix(scene: "Default.CutScene"), withExtension: ".sks", subdirectory: "Scenes/" + gameLogic.getAspectSuffix())!.path) else {
 			print("Failed to load CutScene.sks")
 			abort()
 		}
