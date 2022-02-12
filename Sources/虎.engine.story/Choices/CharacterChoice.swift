@@ -33,7 +33,10 @@ class CharacterChoiceLogic: GameScene, UITextFieldDelegate {
 	var catType: CatType = .None
 	
 	class func newScene(gameLogic: GameLogic) -> CharacterChoiceLogic {
-        let scene: CharacterChoiceLogic = try! gameLogic.loadScene(scene: "Default.CharacterChoice", classType: CharacterChoiceLogic.classForKeyedUnarchiver()) as! CharacterChoiceLogic
+        guard let scene = try! gameLogic.loadScene(scene: "Default.CharacterChoice", classType: CharacterChoiceLogic.classForKeyedUnarchiver()) as? CharacterChoiceLogic else {
+            print("Failed to load CharacterChoice.sks")
+            return CharacterChoiceLogic()
+        }
 		
 		return scene
 	}
