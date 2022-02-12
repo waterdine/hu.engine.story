@@ -14,14 +14,8 @@ import 虎_engine_base
 class RandomChoiceLogic: GameScene {
 	
 	class func newScene(gameLogic: GameLogic) -> ChoiceLogic {
-        guard let scene = ChoiceLogic(fileNamed: gameLogic.loadUrl(forResource: gameLogic.appendAspectSuffix(scene: "Default.Choice"), withExtension: ".sks", subdirectory: "Scenes/" + gameLogic.getAspectSuffix())!.path) else {
-			print("Failed to load Choice.sks")
-			abort()
-		}
+        let scene: ChoiceLogic = try! gameLogic.loadScene(scene: "Default.Choice", classType: ChoiceLogic.classForKeyedUnarchiver()) as! ChoiceLogic
 
-		scene.scaleMode = gameLogic.getScaleMode()
-		scene.gameLogic = gameLogic
-		
 		return scene
 	}
 }

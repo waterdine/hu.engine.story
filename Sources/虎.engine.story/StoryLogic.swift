@@ -17,13 +17,8 @@ class StoryLogic: CutSceneLogic {
     var character: CharacterLogic? = nil
 	
 	override class func newScene(gameLogic: GameLogic) -> StoryLogic {
-		guard let scene = StoryLogic(fileNamed: gameLogic.loadUrl(forResource: gameLogic.appendAspectSuffix(scene: "Default.Story"), withExtension: ".sks", subdirectory: "Scenes/" + gameLogic.getAspectSuffix())!.path) else {
-			print("Failed to load Story.sks")
-			abort()
-		}
+        let scene: StoryLogic = try! gameLogic.loadScene(scene: "Default.Story", classType: StoryLogic.classForKeyedUnarchiver()) as! StoryLogic
  
-		scene.scaleMode = gameLogic.getScaleMode()
-		scene.gameLogic = gameLogic
 		scene.stickyText = false
 		scene.requiresMusic = true
         let fontSizeScale: CGFloat = CGFloat(Float.init(gameLogic.localizedString(forKey: "CharacterFontScale", value: nil, table: "Story"))!)

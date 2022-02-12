@@ -16,13 +16,8 @@ class ChoiceLogic: GameScene {
     var choiceLabels: [SKLabelNode] = []
 	
 	class func newScene(gameLogic: GameLogic) -> ChoiceLogic {
-		guard let scene = ChoiceLogic(fileNamed: gameLogic.loadUrl(forResource: gameLogic.appendAspectSuffix(scene: "Default.Choice"), withExtension: ".sks", subdirectory: "Scenes/" + gameLogic.getAspectSuffix())!.path) else {
-			print("Failed to load Choice.sks")
-			abort()
-		}
+        let scene: ChoiceLogic = try! gameLogic.loadScene(scene: "Default.Choice", classType: ChoiceLogic.classForKeyedUnarchiver()) as! ChoiceLogic
 
-		scene.scaleMode = gameLogic.getScaleMode()
-		scene.gameLogic = gameLogic
 		scene.requiresMusic = true
 		
 		return scene

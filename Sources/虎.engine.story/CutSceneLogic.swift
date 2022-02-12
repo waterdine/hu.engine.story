@@ -57,13 +57,8 @@ open class CutSceneLogic: GameScene {
 	var maskTexture2: SKTexture? = nil
 	
 	class func newScene(gameLogic: GameLogic) -> CutSceneLogic {
-        guard let scene = CutSceneLogic(fileNamed: gameLogic.loadUrl(forResource: gameLogic.appendAspectSuffix(scene: "Default.CutScene"), withExtension: ".sks", subdirectory: "Scenes/" + gameLogic.getAspectSuffix())!.path) else {
-			print("Failed to load CutScene.sks")
-			abort()
-		}
+        let scene: CutSceneLogic = try! gameLogic.loadScene(scene: "Default.CutScene", classType: CutSceneLogic.classForKeyedUnarchiver()) as! CutSceneLogic
 
-		scene.scaleMode = gameLogic.getScaleMode()
-		scene.gameLogic = gameLogic
 		scene.requiresMusic = true
         let fontSizeScale: CGFloat = CGFloat(Float.init(gameLogic.localizedString(forKey: "FontScale", value: nil, table: "Story"))!)
         let coverTextLabel = scene.childNode(withName: "//CoverText") as? SKLabelNode
