@@ -59,7 +59,7 @@ class CharacterLogic: GameSubScene {
                     bundleName = String(resourceSplit[0])
                 }
             }
-            let images = gameLogic?.loadUrls(forResourcesWithExtension: ".png", bundleName: bundleName, subdirectory: "Characters/" + resourceName!)
+            let images = gameLogic?.loadUrls(forResourcesWithExtension: ".png", bundleName: bundleName, subdirectory: "Images/Characters/" + resourceName!)
             if (images == nil || images!.isEmpty) {
                 let image = gameLogic?.loadUrl(forResource: speakerImage!, withExtension: ".png", subdirectory: "Images")
                 if (image != nil) {
