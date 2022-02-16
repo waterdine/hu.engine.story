@@ -180,7 +180,7 @@ open class CutSceneLogic: GameScene {
 			if (storyScene! != currentSubScene) {
 				currentSubScene = storyScene!
 				storyImage?.removeAllChildren()
-				let subScene = SKNode(fileNamed: storyScene!)
+                let subScene = gameLogic?.loadScene(scene: storyScene!, classType: SKNode.classForKeyedUnarchiver()) as? SKNode
 				subSceneNode = (subScene?.childNode(withName: "//Root"))!
 				subScene?.removeAllChildren()
 				storyImage?.addChild(subSceneNode)
