@@ -50,9 +50,18 @@ class CharacterLogic: GameSubScene {
         speakerImageNode = shakeNode.childNode(withName: "//SpeakerImage") as? SKSpriteNode
         let speakerImage: String? = (data as! StoryScene).SpeakerImage
         if (speakerImage != nil) {
-            let images = Bundle.main.urls(forResourcesWithExtension: ".png", subdirectory: "Characters/" + speakerImage!)
-            if (images!.isEmpty) {
-                let image = Bundle.main.url(forResource: speakerImage!, withExtension: ".png")
+            var resourceName = speakerImage
+            var bundleName = "Default"
+            if (speakerImage!.contains(".")) {
+                let resourceSplit = speakerImage!.split(separator: ".")
+                if (resourceSplit.count == 2) {
+                    resourceName = String(resourceSplit[1])
+                    bundleName = String(resourceSplit[0])
+                }
+            }
+            let images = gameLogic?.loadUrls(forResourcesWithExtension: ".png", bundleName: bundleName, subdirectory: "Characters/" + resourceName!)
+            if (images == nil || images!.isEmpty) {
+                let image = gameLogic?.loadUrl(forResource: speakerImage!, withExtension: ".png", subdirectory: "Images")
                 if (image != nil) {
                     speakerImages["MouthClosed.png"] = SKTexture(imageNamed: image!.path)
                     speakerImages["MouthClosed.png"]?.usesMipmaps = true

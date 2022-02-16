@@ -57,7 +57,7 @@ open class CutSceneLogic: GameScene {
 	var maskTexture2: SKTexture? = nil
 	
 	class func newScene(gameLogic: GameLogic) -> CutSceneLogic {
-        let scene: CutSceneLogic = try! gameLogic.loadScene(scene: "Default.CutScene", classType: CutSceneLogic.classForKeyedUnarchiver()) as! CutSceneLogic
+        let scene: CutSceneLogic = gameLogic.loadScene(scene: "Default.CutScene", classType: CutSceneLogic.classForKeyedUnarchiver()) as! CutSceneLogic
 
 		scene.requiresMusic = true
         let fontSizeScale: CGFloat = CGFloat(Float.init(gameLogic.localizedString(forKey: "FontScale", value: nil, table: "Story"))!)
@@ -110,21 +110,21 @@ open class CutSceneLogic: GameScene {
 		centerText = false
 		pauseFor = 0.0
 		
-		var imageMaskPath = Bundle.main.path(forResource: "ImageMask", ofType: ".png")
-		if (imageMaskPath != nil) {
-			maskTexture1 = SKTexture(imageNamed: imageMaskPath!)
+        var imageMaskUrl = gameLogic?.loadUrl(forResource: "Default.ImageMask", withExtension: ".png", subdirectory: "Images")
+		if (imageMaskUrl != nil) {
+            maskTexture1 = SKTexture(imageNamed: imageMaskUrl!.path)
 		}
-		imageMaskPath = Bundle.main.path(forResource: "ImageMask3", ofType: ".png")
-		if (imageMaskPath != nil) {
-			maskTexture2 = SKTexture(imageNamed: imageMaskPath!)
+        imageMaskUrl = gameLogic?.loadUrl(forResource: "Default.ImageMask3", withExtension: ".png", subdirectory: "Images")
+		if (imageMaskUrl != nil) {
+			maskTexture2 = SKTexture(imageNamed: imageMaskUrl!.path)
 		}
 		
 		let storyImage = shakeNode.childNode(withName: "//StoryImage") as? SKSpriteNode
         let image: String = (data as! CutSceneScene).Image
-		let imagePath = Bundle.main.path(forResource: image, ofType: ".png")
-		if (imagePath != nil) {
+		let imageUrl = gameLogic?.loadUrl(forResource: image, withExtension: ".png", subdirectory: "Images/Backgrounds")
+		if (imageUrl != nil) {
 			storyImage?.isHidden = false
-			storyImage?.texture = SKTexture(imageNamed: imagePath!)
+			storyImage?.texture = SKTexture(imageNamed: imageUrl!.path)
 		} else {
 			storyImage?.isHidden = true
 		}
@@ -651,12 +651,14 @@ open class CutSceneLogic: GameScene {
 		} else if (command.starts(with: "[sound:")) {
 			var file = command.replacingOccurrences(of: "[sound:", with: "")
 			file = file.trimmingCharacters(in: ["]"])
-			let path = file + ".mp3"
-			if (waitfornext) {
-				queuedSound = path
-			} else {
-				self.run(SKAction.playSoundFileNamed(path, waitForCompletion: false))
-			}
+            let url = gameLogic?.loadUrl(forResource: file, withExtension: ".mp3", subdirectory: "Sound")
+            if (url != nil) {
+                if (waitfornext) {
+                    queuedSound = url!.path
+                } else {
+                    self.run(SKAction.playSoundFileNamed(url!.path, waitForCompletion: false))
+                }
+            }
 		} else if (command.starts(with: "[soundloop:")) {
 			var musicFile = command.replacingOccurrences(of: "[soundloop:", with: "")
 			musicFile = musicFile.trimmingCharacters(in: ["]"])
@@ -665,7 +667,7 @@ open class CutSceneLogic: GameScene {
 					self.gameLogic?.loopSound?.stop()
 				}
 				if (musicFile != "") {
-					let file = Bundle.main.url(forResource: musicFile, withExtension: ".mp3")
+                    let file = gameLogic?.loadUrl(forResource: musicFile, withExtension: ".mp3", subdirectory: "Sound")
 					if (file != nil) {
 						try self.gameLogic?.loopSound = AVAudioPlayer(contentsOf: file!)
 						self.gameLogic?.loopSound?.numberOfLoops = -1

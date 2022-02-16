@@ -13,7 +13,7 @@ import 虎_engine_base
 class ChapterTransitionLogic: GameScene {
 	
 	class func newScene(gameLogic: GameLogic) -> ChapterTransitionLogic {
-        let scene: ChapterTransitionLogic = try! gameLogic.loadScene(scene: "Default.ChapterTransition", classType: ChapterTransitionLogic.classForKeyedUnarchiver()) as! ChapterTransitionLogic
+        let scene: ChapterTransitionLogic = gameLogic.loadScene(scene: "Default.ChapterTransition", classType: ChapterTransitionLogic.classForKeyedUnarchiver()) as! ChapterTransitionLogic
 
 		scene.defaultTransition = true
 		

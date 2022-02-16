@@ -16,7 +16,7 @@ class ChoiceLogic: GameScene {
     var choiceLabels: [SKLabelNode] = []
 	
 	class func newScene(gameLogic: GameLogic) -> ChoiceLogic {
-        let scene: ChoiceLogic = try! gameLogic.loadScene(scene: "Default.Choice", classType: ChoiceLogic.classForKeyedUnarchiver()) as! ChoiceLogic
+        let scene: ChoiceLogic = gameLogic.loadScene(scene: "Default.Choice", classType: ChoiceLogic.classForKeyedUnarchiver()) as! ChoiceLogic
 
 		scene.requiresMusic = true
 		
@@ -67,10 +67,10 @@ class ChoiceLogic: GameScene {
 		
 		let storyImage = self.childNode(withName: "//StoryImage") as? SKSpriteNode
         let image: String = (data as! ChoiceScene).Image
-		let imagePath = Bundle.main.path(forResource: image, ofType: ".png")
-		if (imagePath != nil) {
+        let imageUrl = gameLogic?.loadUrl(forResource: image, withExtension: ".png", subdirectory: "Images/Backgrounds")
+		if (imageUrl != nil) {
 			storyImage?.isHidden = false
-			storyImage?.texture = SKTexture(imageNamed: imagePath!)
+            storyImage?.texture = SKTexture(imageNamed: imageUrl!.path)
 		} else {
 			storyImage?.isHidden = true
 		}
