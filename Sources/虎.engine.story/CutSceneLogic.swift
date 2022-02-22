@@ -42,7 +42,7 @@ open class CutSceneLogic: GameScene {
 	var shakeNode: SKNode = SKNode()
 	var pauseFor: Double = 0.0
 	var lastTime: Double = 0.0
-	var queuedSound: String = ""
+	var queuedSound: URL? = nil
 	var queuedBlackCover: Bool = false
 	
 	var currentOffset: CGSize = CGSize(width: 0.0, height: 0.0)
@@ -514,9 +514,18 @@ open class CutSceneLogic: GameScene {
 				waitfornext = false
 				animatingText = true
 				lastTextChange = 0.0
-				if (queuedSound != "") {
-					self.run(SKAction.playSoundFileNamed(queuedSound, waitForCompletion: false))
-					queuedSound = ""
+				if (queuedSound != nil) {
+                    self.run(SKAction.run({[queuedSound] in
+                        if (self.gameLogic?.loopSound != nil) {
+                            self.gameLogic?.loopSound?.stop()
+                        }
+                        if (queuedSound != nil) {
+                            try! self.gameLogic?.loopSound = AVAudioPlayer(contentsOf: queuedSound!)
+                            self.gameLogic?.loopSound?.numberOfLoops = 0
+                            self.gameLogic?.loopSound?.play()
+                        }
+                    }))
+					queuedSound = nil
 				}
 				if (queuedBlackCover) {
 					let cover = shakeNode.childNode(withName: "//Cover") as? SKSpriteNode
@@ -654,9 +663,18 @@ open class CutSceneLogic: GameScene {
             let url = gameLogic?.loadUrl(forResource: file, withExtension: ".mp3", subdirectory: "Sound")
             if (url != nil) {
                 if (waitfornext) {
-                    queuedSound = url!.path
+                    queuedSound = url
                 } else {
-                    self.run(SKAction.playSoundFileNamed(url!.path, waitForCompletion: false))
+                    self.run(SKAction.run({[url] in
+                        if (self.gameLogic?.loopSound != nil) {
+                            self.gameLogic?.loopSound?.stop()
+                        }
+                        if (url != nil) {
+                            try! self.gameLogic?.loopSound = AVAudioPlayer(contentsOf: url!)
+                            self.gameLogic?.loopSound?.numberOfLoops = 0
+                            self.gameLogic?.loopSound?.play()
+                        }
+                    }))
                 }
             }
 		} else if (command.starts(with: "[soundloop:")) {
