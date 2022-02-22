@@ -522,6 +522,7 @@ open class CutSceneLogic: GameScene {
                         if (queuedSound != nil) {
                             try! self.gameLogic?.loopSound = AVAudioPlayer(contentsOf: queuedSound!)
                             self.gameLogic?.loopSound?.numberOfLoops = 0
+                            self.gameLogic?.alignVolumeLevel()
                             self.gameLogic?.loopSound?.play()
                         }
                     }))
@@ -672,6 +673,7 @@ open class CutSceneLogic: GameScene {
                         if (url != nil) {
                             try! self.gameLogic?.loopSound = AVAudioPlayer(contentsOf: url!)
                             self.gameLogic?.loopSound?.numberOfLoops = 0
+                            self.gameLogic?.alignVolumeLevel()
                             self.gameLogic?.loopSound?.play()
                         }
                     }))
@@ -689,6 +691,7 @@ open class CutSceneLogic: GameScene {
 					if (file != nil) {
 						try self.gameLogic?.loopSound = AVAudioPlayer(contentsOf: file!)
 						self.gameLogic?.loopSound?.numberOfLoops = -1
+                        self.gameLogic?.alignVolumeLevel()
 						self.gameLogic?.loopSound?.play()
 					}
 				}
