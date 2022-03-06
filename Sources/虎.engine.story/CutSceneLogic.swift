@@ -60,7 +60,7 @@ open class CutSceneLogic: GameScene {
         let scene: CutSceneLogic = gameLogic.loadScene(scene: "Default.CutScene", classType: CutSceneLogic.classForKeyedUnarchiver()) as! CutSceneLogic
 
 		scene.requiresMusic = true
-        let fontSizeScale: CGFloat = CGFloat(Float.init(gameLogic.localizedString(forKey: "FontScale", value: nil, table: "Story"))!)
+        let fontSizeScale: CGFloat = CGFloat(Float.init(gameLogic.localizedString(forKey: "FontScale", value: nil, table: "Story")) ?? 1.0)
         let coverTextLabel = scene.childNode(withName: "//CoverText") as? SKLabelNode
         coverTextLabel?.fontSize = coverTextLabel!.fontSize * fontSizeScale
         let textLabel = scene.childNode(withName: "//Text") as? SKLabelNode
