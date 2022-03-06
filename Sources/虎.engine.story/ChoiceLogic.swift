@@ -97,7 +97,7 @@ class ChoiceLogic: GameScene {
                         self.gameLogic?.variables[variableToSet!] = gameLogic!.localizedString(forKey: choice.Text, value: nil, table: self.gameLogic!.getChapterTable())
                     }
                     if (choice.SkipTo != nil) {
-                        self.gameLogic?.setScene(sceneIndex: choice.SkipTo!, chapterIndex: self.gameLogic!.currentChapterIndex!)
+                        self.gameLogic?.setScene(sceneIndex: choice.SkipTo!, script: nil)
                     } else {
                         self.gameLogic?.nextScene()
                     }
