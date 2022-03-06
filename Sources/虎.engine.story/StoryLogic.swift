@@ -21,7 +21,7 @@ class StoryLogic: CutSceneLogic {
  
 		scene.stickyText = false
 		scene.requiresMusic = true
-        let fontSizeScale: CGFloat = CGFloat(Float.init(gameLogic.localizedString(forKey: "CharacterFontScale", value: nil, table: "Story"))!)
+        let fontSizeScale: CGFloat = CGFloat(Float.init(gameLogic.localizedString(forKey: "CharacterFontScale", value: nil, table: "Story")) ?? 1.0)
         let textLabel = scene.childNode(withName: "//Text") as? SKLabelNode
         textLabel?.fontSize = textLabel!.fontSize * fontSizeScale
 		
