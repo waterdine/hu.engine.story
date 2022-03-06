@@ -118,12 +118,12 @@ class StoryGameSceneSerialiser: BaseSceneSerialiser {
         }
     }
     
-    open override func appendText(scene: BaseScene, text: String, textBucket: String, chapterNumber: String, sceneNumber: String, lineIndex: Int, strings: inout [String : String], command: Bool, sceneLabelMap: inout [String : Int]) {
+    open override func appendText(scene: BaseScene, text: String, textBucket: String, scriptNumber: String, sceneNumber: String, lineIndex: Int, strings: inout [String : String], command: Bool, sceneLabelMap: inout [String : Int]) {
         let line: TextLine = TextLine()
         line.textString = text
         if (textBucket.isEmpty) {
             let lineString = "line_\(lineIndex)"
-            let lineReference = chapterNumber + "_" + sceneNumber + "_" + lineString
+            let lineReference = scriptNumber + "_" + sceneNumber + "_" + lineString
             switch scene.Scene {
             case "Story":
                 if (!command) {
@@ -141,7 +141,7 @@ class StoryGameSceneSerialiser: BaseSceneSerialiser {
                 break
             case "Choice":
                 if (text.starts(with: "DirectingText")) {
-                    (scene as! ChoiceScene).DirectingText = chapterNumber + "_" + sceneNumber + "_direction"
+                    (scene as! ChoiceScene).DirectingText = scriptNumber + "_" + sceneNumber + "_direction"
                     strings[(scene as! ChoiceScene).DirectingText] = text.replacingOccurrences(of: "DirectingText: ", with: "")
                 } else if (text.starts(with: "Choice")) {
                     let choiceSplit = text.replacingOccurrences(of: "//", with: "±").split(separator: "±")
@@ -187,7 +187,7 @@ class StoryGameSceneSerialiser: BaseSceneSerialiser {
                         choiceParameters["SkipTo"] = newSkipTo
                     }
                     
-                    choiceParameters["Chapter"] = chapterNumber
+                    choiceParameters["Chapter"] = scriptNumber
                     choiceParameters["SceneNumber"] = sceneNumber
                     let choice = Choice.init(from: choiceParameters, strings: &strings)
                     let choiceIndex = Int(choiceNumber)!
@@ -203,16 +203,16 @@ class StoryGameSceneSerialiser: BaseSceneSerialiser {
                 }
             case "ChapterTransition":
                 if (text.starts(with: "HorizontalNumber")) {
-                    (scene as! ChapterTransitionScene).HorizontalNumber = chapterNumber + "_horizontal_number"
+                    (scene as! ChapterTransitionScene).HorizontalNumber = scriptNumber + "_horizontal_number"
                     strings[(scene as! ChapterTransitionScene).HorizontalNumber] = text.replacingOccurrences(of: "HorizontalNumber: ", with: "")
                 } else if (text.starts(with: "HorizontalTitle")) {
-                    (scene as! ChapterTransitionScene).HorizontalTitle = chapterNumber + "_horizontal_title"
+                    (scene as! ChapterTransitionScene).HorizontalTitle = scriptNumber + "_horizontal_title"
                     strings[(scene as! ChapterTransitionScene).HorizontalTitle] = text.replacingOccurrences(of: "HorizontalTitle: ", with: "")
                 } else if (text.starts(with: "VerticalNumber")) {
-                    (scene as! ChapterTransitionScene).VerticalNumber = chapterNumber + "_vertical_number"
+                    (scene as! ChapterTransitionScene).VerticalNumber = scriptNumber + "_vertical_number"
                     strings[(scene as! ChapterTransitionScene).VerticalNumber!] = text.replacingOccurrences(of: "VerticalNumber: ", with: "")
                 } else if (text.starts(with: "VerticalTitle")) {
-                    (scene as! ChapterTransitionScene).VerticalTitle = chapterNumber + "_vertical_title"
+                    (scene as! ChapterTransitionScene).VerticalTitle = scriptNumber + "_vertical_title"
                     strings[(scene as! ChapterTransitionScene).VerticalTitle!] = text.replacingOccurrences(of: "VerticalTitle: ", with: "")
                 }
             default: break
