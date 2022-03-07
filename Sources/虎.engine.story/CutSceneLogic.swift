@@ -221,11 +221,11 @@ open class CutSceneLogic: GameScene {
 		let variableToSet = (data as! CutSceneScene).VariableToSet
 		let variableText = (data as! CutSceneScene).VariableText
 		if (variableToSet != nil && variableText != nil) {
-			self.gameLogic?.variables[variableToSet!] = gameLogic!.localizedString(forKey: variableText!, value: nil, table: self.gameLogic!.getChapterTable())
+            self.gameLogic?.gameState.variables[variableToSet!] = gameLogic!.localizedString(forKey: variableText!, value: nil, table: self.gameLogic!.getChapterTable())
 		}
 		let flag = (data as! CutSceneScene).Flag
 		if (flag != nil) {
-			self.gameLogic?.flags.append(flag!)
+            self.gameLogic?.gameState.flags.append(flag!)
 		}
 		enablePrevSceneIndicator()
 	}

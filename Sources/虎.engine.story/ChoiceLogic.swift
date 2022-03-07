@@ -56,7 +56,7 @@ class ChoiceLogic: GameScene {
                 /*if (choice3Node != nil) {
                     choiceNode?.size.height = max(choiceNode!.frame.height, choiceLabel!.frame.height)
                 }*/
-                choiceNode.isHidden = (choice.HideOnFlag == nil || choice.HideOnFlag! == "" || !self.gameLogic!.flags.contains(choice.HideOnFlag!)) ? false : true
+                choiceNode.isHidden = (choice.HideOnFlag == nil || choice.HideOnFlag! == "" || !self.gameLogic!.gameState.flags.contains(choice.HideOnFlag!)) ? false : true
             }
         }
 		/*
@@ -94,7 +94,7 @@ class ChoiceLogic: GameScene {
                 let choiceNode = choiceNodes[index]
                 if (!choiceNode.isHidden && choiceNode.frame.contains(point)) {
                     if (variableToSet != nil) {
-                        self.gameLogic?.variables[variableToSet!] = gameLogic!.localizedString(forKey: choice.Text, value: nil, table: self.gameLogic!.getChapterTable())
+                        self.gameLogic?.gameState.variables[variableToSet!] = gameLogic!.localizedString(forKey: choice.Text, value: nil, table: self.gameLogic!.getChapterTable())
                     }
                     if (choice.SkipTo != nil) {
                         self.gameLogic?.setScene(sceneIndex: choice.SkipTo!, script: nil)
@@ -103,13 +103,13 @@ class ChoiceLogic: GameScene {
                     }
                     if (flag != nil) {
                         if (index == 0) {
-                            self.gameLogic?.flags.append(flag!)
+                            self.gameLogic?.gameState.flags.append(flag!)
                         } else {
-                            self.gameLogic?.flags.removeAll(where: { $0 == (flag!) })
+                            self.gameLogic?.gameState.flags.removeAll(where: { $0 == (flag!) })
                         }
                     }
                     if (choice.Flag != nil) {
-                        self.gameLogic?.flags.append(choice.Flag!)
+                        self.gameLogic?.gameState.flags.append(choice.Flag!)
                     }
                 }
             }
