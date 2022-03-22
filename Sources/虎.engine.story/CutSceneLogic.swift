@@ -393,7 +393,7 @@ open class CutSceneLogic: GameScene {
 					let fadingCharacterAlpha = deltaFadeTime - Double(Int(deltaFadeTime))
 					
 					var fakeIndex = 0
-                    var lastRevealedCharacter: Character = Character.init("a")
+                    var lastRevealedCharacter: String.Character = String.Character.init("a")
 					for index: Int in 0 ... newText.count - 1 {
 						let indexFadeStartTime = Double(fakeIndex) * textFadeTime
 						let characterAlpha = (delta >= indexFadeStartTime + textFadeTime) ? 1.0 : (delta < indexFadeStartTime) ? 0.0 : fadingCharacterAlpha
