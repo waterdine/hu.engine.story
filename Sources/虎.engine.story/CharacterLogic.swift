@@ -19,7 +19,7 @@ class CharacterLogic: GameSubScene {
     var speakerImages: [String: SKTexture] = [:]
     var enableMouth: Bool = false
     
-    public init(gameLogic: GameLogic?, shakeNode: SKNode, startHidden: Bool, isRoyalSpeaker: Bool, speaker: String, speakerImage: String?, imageRotation: Float?, speakerAreaNode: SKSpriteNode?) {
+    public init(gameLogic: GameLogic?, shakeNode: SKNode, startHidden: Bool, isRoyalSpeaker: Bool, speaker: String, speakerImage: String?, imageRotation: Float?, speakerAreaNode: SKSpriteNode?, scale: CGFloat, position: CGFloat) {
         super.init(gameLogic: gameLogic)
 
         speakerImageNode = SKSpriteNode()
@@ -50,7 +50,6 @@ class CharacterLogic: GameSubScene {
                 }
             }
             if (speakerImages.count > 0) {
-                let scale = (speakerImageNode?.userData!["scale"] as! CGFloat)
                 let defaultTexture = speakerImages["MouthClosed.png"]
                 if (defaultTexture != nil) {
                     speakerImageNode?.texture = defaultTexture
@@ -70,40 +69,16 @@ class CharacterLogic: GameSubScene {
             speakerImageNode?.isHidden = true
         }
         
-        /*if (originalSpeakerY != nil) {
-            speakerImageNode?.position.y = originalSpeakerY!
-            originalSpeakerY = nil
-        }*/ // atode: Must persist
+        originalSpeakerY = position
         
         if (imageRotation != nil) {
             speakerImageNode?.zRotation = CGFloat((Double(imageRotation!) / 180.0) * Double.pi)
-            originalSpeakerY = speakerImageNode!.position.y
             speakerImageNode?.position.y = self.frame.maxY - (speakerImageNode?.size.height)! / 2.0
         } else {
             speakerImageNode?.zRotation = 0.0
         }
         
         speakerImageNode?.isHidden = startHidden
-        
-        /*let textArea = shakeNode.childNode(withName: "//TextArea") as? SKSpriteNode
-        var theme = data?["Theme"] as? String
-        if (theme == nil) {
-            theme = "Theme1"
-        }
-        let textNode = shakeNode.childNode(withName: "//Text") as? SKLabelNode
-        let themeColor = textArea?.userData?[theme as Any] as? String
-        if (themeColor != nil) {
-            if (themeColor! == "White") {
-                textArea?.color = UIColor.white
-                textNode?.fontColor = UIColor.init(red: 0.0, green: 88.0 / 255.0, blue: 208.0 / 255.0, alpha: 1.0)
-            } else if (themeColor! == "0058D0") {
-                textArea?.color = UIColor.init(red: 0.0, green: 88.0 / 255.0, blue: 208.0 / 255.0, alpha: 1.0)
-                textNode?.fontColor = UIColor.white
-            } else if (themeColor! == "Black") {
-                textArea?.color = UIColor.black
-                textNode?.fontColor = UIColor.white
-            }
-        }*/
     }
     
     required init?(coder aDecoder: NSCoder) {
