@@ -11,10 +11,9 @@ import 虎_engine_base
 @available(OSX 10.13, *)
 @available(iOS 9.0, *)
 class StoryLogic: CutSceneLogic {
-	
-	var originalSpeakerY: CGFloat? = nil
-    //var characters: [CharacterLogic] = []
+
     var character: CharacterLogic? = nil
+    var characters: [CharacterLogic] = []
 	
 	override class func newScene(gameLogic: GameLogic) -> StoryLogic {
         let scene: StoryLogic = gameLogic.loadScene(scene: "Default.Story", classType: StoryLogic.classForKeyedUnarchiver()) as! StoryLogic
@@ -37,26 +36,44 @@ class StoryLogic: CutSceneLogic {
             startHidden = true
         }
         
-        character = CharacterLogic(gameLogic: gameLogic, shakeNode: shakeNode, startHidden: startHidden, data: data!)
+        characters = []
+        if (!(data as! StoryScene).Speaker.isEmpty || !(data as! StoryScene).SpeakerImage.isEmpty) {
+            let speaker = gameLogic!.localizedString(forKey: (data as! StoryScene).Speaker, value: nil, table: "Story")
+            let isRoyalSpeaker = (data as! StoryScene).RoyalSpeaker ?? false
+            let speakerImage: String? = (data as! StoryScene).SpeakerImage
+            let imageRotation: Float? = (data as! StoryScene).Rotation
+            var speakerAreaNode = shakeNode.childNode(withName: "//SpeakerArea") as? SKSpriteNode
+            
+            if (isRoyalSpeaker) {
+                speakerAreaNode = shakeNode.childNode(withName: "//SpeakerAreaRoyal") as? SKSpriteNode
+            }
+            character = CharacterLogic(gameLogic: gameLogic, shakeNode: shakeNode, startHidden: startHidden, isRoyalSpeaker: isRoyalSpeaker, speaker: speaker, speakerImage: speakerImage, imageRotation: imageRotation, speakerAreaNode: speakerAreaNode)
+            characters.append(character!)
+        }
         
-		let speakerRoyalLabel = shakeNode.childNode(withName: "//SpeakerRoyal") as! SKLabelNode
-		let speakerLabel = shakeNode.childNode(withName: "//Speaker") as! SKLabelNode
-        let font = gameLogic!.localizedString(forKey: "CharacterFontName", value: nil, table: "Story")
-        if (character!.isRoyalSpeaker) {
-            speakerRoyalLabel.text = character!.speaker
-            speakerRoyalLabel.fontName = font
-			speakerRoyalLabel.isHidden = false
-			speakerLabel.isHidden = true
-		} else {
-            speakerLabel.text = character!.speaker
-            speakerLabel.fontName = font
-			speakerRoyalLabel.isHidden = true
-			speakerLabel.isHidden = false
-		}
+        if (textList != nil) {
+            for textLine in textList! {
+                let speaker = gameLogic!.localizedString(forKey: textLine.character, value: nil, table: "Story")
+                if (!characters.contains(where: { $0.speaker == speaker })) {
+                    let isRoyalSpeaker = false
+                    var speakerAreaNode = shakeNode.childNode(withName: "//SpeakerArea") as? SKSpriteNode
+                    
+                    if (isRoyalSpeaker) {
+                        speakerAreaNode = shakeNode.childNode(withName: "//SpeakerAreaRoyal") as? SKSpriteNode
+                    }
+                    let speakerImage: String? = gameLogic?.story?.Characters.first(where: { $0.name == textLine.character })?.model
+                    characters.append(CharacterLogic(gameLogic: gameLogic, shakeNode: shakeNode, startHidden: startHidden, isRoyalSpeaker: isRoyalSpeaker, speaker: speaker, speakerImage: speakerImage, imageRotation: 0.0, speakerAreaNode: speakerAreaNode))
+                }
+            }
+        }
+        
+        let speakerImageNode = shakeNode.childNode(withName: "//SpeakerImage") as? SKSpriteNode
+        
+        for character in characters {
+            speakerImageNode!.addChild(character)
+        }
 		
-		let speakerImageNode = shakeNode.childNode(withName: "//SpeakerImage") as? SKSpriteNode
-		
-		if (originalSpeakerY != nil) {
+		/*if (originalSpeakerY != nil) {
 			speakerImageNode?.position.y = originalSpeakerY!
 			originalSpeakerY = nil
 		}
@@ -68,7 +85,7 @@ class StoryLogic: CutSceneLogic {
 			speakerImageNode?.position.y = self.frame.maxY - (speakerImageNode?.size.height)! / 2.0
 		} else {
 			speakerImageNode?.zRotation = 0.0
-		}
+		}*/
 			
 		let storyImageNode = self.childNode(withName: "//StoryImage")
 		let disableOffset = storyImageNode?.userData?["disableOffset"] as? Bool
@@ -104,8 +121,8 @@ class StoryLogic: CutSceneLogic {
     
     override func update(_ currentTime: TimeInterval) {
         super.update(currentTime)
-        if (character != nil) {
-            character!.update(currentTime, animatingText: animatingText, textSpeechPause: textSpeechPause)
+        for character in characters {
+            character.update(currentTime, animatingText: animatingText, textSpeechPause: textSpeechPause)
         }
     }
 	
@@ -114,24 +131,44 @@ class StoryLogic: CutSceneLogic {
 		return super.readyForNextAction(currentTime: currentTime, delay: delay) && !speakerImageNode!.hasActions()
 	}
 	
-	override func processTextCommand(command: String) {
+	override func processTextCommand(command: TextLine) {
 		super.processTextCommand(command: command)
         
-        if (character != nil) {
+        var speaker = character
+        if (!command.character.isEmpty) {
+            speaker = characters.first(where: { $0.speaker == command.character })
+        }
+        
+        if (speaker != nil) {
             var speakerAreaNode = shakeNode.childNode(withName: "//SpeakerArea") as? SKSpriteNode
             
-            if (character!.isRoyalSpeaker) {
+            if (speaker?.isRoyalSpeaker ?? false) {
                 speakerAreaNode = shakeNode.childNode(withName: "//SpeakerAreaRoyal") as? SKSpriteNode
             }
-            character?.processTextCommand(command: command, speakerAreaNode: speakerAreaNode!)
+            speaker?.processTextCommand(command: command, speakerAreaNode: speakerAreaNode!)
+            
+            let speakerRoyalLabel = shakeNode.childNode(withName: "//SpeakerRoyal") as! SKLabelNode
+            let speakerLabel = shakeNode.childNode(withName: "//Speaker") as! SKLabelNode
+            let font = gameLogic!.localizedString(forKey: "CharacterFontName", value: nil, table: "Story")
+            if (speaker!.isRoyalSpeaker) {
+                speakerRoyalLabel.text = speaker?.name
+                speakerRoyalLabel.fontName = font
+                speakerRoyalLabel.isHidden = false
+                speakerLabel.isHidden = true
+            } else {
+                speakerLabel.text = speaker?.name
+                speakerLabel.fontName = font
+                speakerRoyalLabel.isHidden = true
+                speakerLabel.isHidden = false
+            }
         }
         
         let textNode = shakeNode.childNode(withName: "//Text") as? SKLabelNode
 		
-		if (command == "[jump]") {
-		} else if (command == "[enterleft]") {
-		} else if (command == "[enterright]") {
-		} else if (command == "[fadeout]") {
+		if (command.textString == "[jump]") {
+		} else if (command.textString == "[enterleft]") {
+		} else if (command.textString == "[enterright]") {
+		} else if (command.textString == "[fadeout]") {
 			textNode?.run(SKAction.fadeOut(withDuration: 0.7))
 		}
 	}
