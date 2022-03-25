@@ -193,8 +193,8 @@ class CutSceneScene: VisualScene {
 }
 
 class StoryScene: CutSceneScene {
-    var Speaker: String? = ""
-    var SpeakerImage: String? = ""
+    var Speaker: String? = nil
+    var SpeakerImage: String? = nil
     var RoyalSpeaker: Bool? = nil
     var Offset: Int? = nil
     var Theme: String? = nil
