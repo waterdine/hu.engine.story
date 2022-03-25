@@ -39,6 +39,14 @@ class StoryLogic: CutSceneLogic {
         let speakerImageNode = shakeNode.childNode(withName: "//SpeakerImage") as? SKSpriteNode
         let scale = (speakerImageNode?.userData!["scale"] as! CGFloat)
         
+        let speakerRoyalLabel = shakeNode.childNode(withName: "//SpeakerRoyal") as! SKLabelNode
+        let speakerLabel = shakeNode.childNode(withName: "//Speaker") as! SKLabelNode
+        let font = gameLogic!.localizedString(forKey: "CharacterFontName", value: nil, table: "Story")
+        speakerRoyalLabel.fontName = font
+        speakerRoyalLabel.isHidden = true
+        speakerLabel.fontName = font
+        speakerLabel.isHidden = true
+        
         characters = []
         if (!(data as! StoryScene).Speaker.isEmpty || !(data as! StoryScene).SpeakerImage.isEmpty) {
             let speaker = gameLogic!.localizedString(forKey: (data as! StoryScene).Speaker, value: nil, table: "Story")
@@ -117,7 +125,30 @@ class StoryLogic: CutSceneLogic {
 		let speakerImageNode = shakeNode.childNode(withName: "//SpeakerImage") as? SKSpriteNode
 		return super.readyForNextAction(currentTime: currentTime, delay: delay) && !speakerImageNode!.hasActions()
 	}
-	
+    
+    override func processText(line: TextLine) {
+        super.processText(line: line)
+        
+        var speaker = character
+        if (!line.character.isEmpty) {
+            speaker = characters.first(where: { $0.speaker == line.character })
+        }
+        
+        if (speaker != nil) {
+            let speakerRoyalLabel = shakeNode.childNode(withName: "//SpeakerRoyal") as! SKLabelNode
+            let speakerLabel = shakeNode.childNode(withName: "//Speaker") as! SKLabelNode
+            if (speaker!.isRoyalSpeaker) {
+                speakerRoyalLabel.text = speaker?.name
+                speakerRoyalLabel.isHidden = false
+                speakerLabel.isHidden = true
+            } else {
+                speakerLabel.text = speaker?.name
+                speakerRoyalLabel.isHidden = true
+                speakerLabel.isHidden = false
+            }
+        }
+    }
+    
 	override func processTextCommand(command: TextLine) {
 		super.processTextCommand(command: command)
         
@@ -133,21 +164,6 @@ class StoryLogic: CutSceneLogic {
                 speakerAreaNode = shakeNode.childNode(withName: "//SpeakerAreaRoyal") as? SKSpriteNode
             }
             speaker?.processTextCommand(command: command, speakerAreaNode: speakerAreaNode!)
-            
-            let speakerRoyalLabel = shakeNode.childNode(withName: "//SpeakerRoyal") as! SKLabelNode
-            let speakerLabel = shakeNode.childNode(withName: "//Speaker") as! SKLabelNode
-            let font = gameLogic!.localizedString(forKey: "CharacterFontName", value: nil, table: "Story")
-            if (speaker!.isRoyalSpeaker) {
-                speakerRoyalLabel.text = speaker?.name
-                speakerRoyalLabel.fontName = font
-                speakerRoyalLabel.isHidden = false
-                speakerLabel.isHidden = true
-            } else {
-                speakerLabel.text = speaker?.name
-                speakerLabel.fontName = font
-                speakerRoyalLabel.isHidden = true
-                speakerLabel.isHidden = false
-            }
         }
         
         let textNode = shakeNode.childNode(withName: "//Text") as? SKLabelNode

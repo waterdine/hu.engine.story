@@ -608,7 +608,7 @@ open class CutSceneLogic: GameScene {
 		let textList: [TextLine]? = (data as! CutSceneScene).Text
 		if (textList != nil && textList!.count > self.currentTextIndex) {
 			let nextLine = (textList![self.currentTextIndex].textString)
-			return nextLine.hasPrefix("[") && nextLine.hasSuffix("]")
+            return nextLine.hasPrefix("[") && nextLine.hasSuffix("]")
 		} else {
 			return false
 		}
@@ -761,6 +761,18 @@ open class CutSceneLogic: GameScene {
 			self.gameLogic?.player = nil
 		}
 	}
+    
+    func processText(line: TextLine) {
+        if (waitfornext) {
+            fixedText = ""
+            newText = skipIndent ? "" : "\t"
+        } else if (fixedText != "" && fixedText != "\t" && !skipIndent) {
+            newText += "\t"
+        }
+        var nextLine = gameLogic!.localizedString(forKey: line.textString, value: nil, table: self.gameLogic!.getChapterTable())
+        nextLine = self.gameLogic!.unwrapVariables(text: nextLine)
+        newText += nextLine
+    }
 	
 	func nextText() {
 		disablePrevSceneIndicator()
@@ -786,15 +798,7 @@ open class CutSceneLogic: GameScene {
 		}
 		
 		if (textList.count > self.currentTextIndex) {
-			if (waitfornext) {
-				fixedText = ""
-				newText = skipIndent ? "" : "\t"
-			} else if (fixedText != "" && fixedText != "\t" && !skipIndent) {
-				newText += "\t"
-			}
-			var nextLine = gameLogic!.localizedString(forKey: (textList[self.currentTextIndex].textString), value: nil, table: self.gameLogic!.getChapterTable())
-			nextLine = self.gameLogic!.unwrapVariables(text: nextLine)
-			newText += nextLine
+            processText(line: textList[self.currentTextIndex])
 		}
 		
 		if (self.instantText) {
