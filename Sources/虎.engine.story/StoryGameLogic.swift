@@ -28,3 +28,10 @@ public func RegisterStoryGameSceneInitialisers(sceneListSerialiser: inout SceneL
     sceneListSerialiser.serialisers.append(StoryGameSceneSerialiser())
 }
 
+public func RegisterStoryGameSettings(settings: inout [String])
+{
+    settings.append("FontScale");
+    settings.append("ButtonFontName");
+    settings.append("CharacterFontName");
+    settings.append("CharacterFontScale");
+}
