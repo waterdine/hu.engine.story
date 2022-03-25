@@ -193,8 +193,8 @@ class CutSceneScene: VisualScene {
 }
 
 class StoryScene: CutSceneScene {
-    var Speaker: String = ""
-    var SpeakerImage: String = ""
+    var Speaker: String? = ""
+    var SpeakerImage: String? = ""
     var RoyalSpeaker: Bool? = nil
     var Offset: Int? = nil
     var Theme: String? = nil
@@ -238,8 +238,8 @@ class StoryScene: CutSceneScene {
     required init(from decoder: Decoder) throws {
         try super.init(from: decoder)
         let container = try decoder.container(keyedBy: StoryCodingKeys.self)
-        Speaker = try container.decode(String.self, forKey: StoryCodingKeys.Speaker)
-        SpeakerImage = try container.decode(String.self, forKey: StoryCodingKeys.SpeakerImage)
+        Speaker = try container.decodeIfPresent(String.self, forKey: StoryCodingKeys.Speaker)
+        SpeakerImage = try container.decodeIfPresent(String.self, forKey: StoryCodingKeys.SpeakerImage)
         RoyalSpeaker = try container.decodeIfPresent(Bool.self, forKey: StoryCodingKeys.RoyalSpeaker)
         Offset = try container.decodeIfPresent(Int.self, forKey: StoryCodingKeys.Offset)
         Theme = try container.decodeIfPresent(String.self, forKey: StoryCodingKeys.Theme)
@@ -248,23 +248,27 @@ class StoryScene: CutSceneScene {
     override func encode(to encoder: Encoder) throws {
         try super.encode(to: encoder)
         var container = encoder.container(keyedBy: StoryCodingKeys.self)
-        try container.encode(Speaker, forKey: StoryCodingKeys.Speaker)
-        try container.encode(SpeakerImage, forKey: StoryCodingKeys.SpeakerImage)
+        try container.encodeIfPresent(Speaker, forKey: StoryCodingKeys.Speaker)
+        try container.encodeIfPresent(SpeakerImage, forKey: StoryCodingKeys.SpeakerImage)
         try container.encodeIfPresent(RoyalSpeaker, forKey: StoryCodingKeys.RoyalSpeaker)
         try container.encodeIfPresent(Offset, forKey: StoryCodingKeys.Offset)
         try container.encodeIfPresent(Theme, forKey: StoryCodingKeys.Theme)
     }
     
     override func getDescription() -> String {
-        return "Story, \(Speaker)"
+        return "Story, \(Speaker ?? "")"
     }
     
     override func toScriptHeader(index: Int, strings: [String : String], indexMap: [Int : String]) -> String {
         var scriptLine: String = super.superScriptLine(index: index, strings: strings, indexMap: indexMap)
         
-        scriptLine += ", Speaker: " + Speaker
+        if (Speaker != nil) {
+            scriptLine += ", Speaker: " + Speaker!
+        }
         
-        scriptLine += ", SpeakerImage: " + SpeakerImage
+        if (SpeakerImage != nil) {
+            scriptLine += ", SpeakerImage: " + SpeakerImage!
+        }
         
         if (RoyalSpeaker != nil) {
             scriptLine += ", RoyalSpeaker: " + ((RoyalSpeaker! == true) ? "True" : "False")

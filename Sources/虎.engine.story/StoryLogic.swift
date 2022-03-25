@@ -49,10 +49,13 @@ class StoryLogic: CutSceneLogic {
         speakerLabel.isHidden = true
         
         characters = []
-        if (!(data as! StoryScene).Speaker.isEmpty || !(data as! StoryScene).SpeakerImage.isEmpty) {
-            let speaker = gameLogic!.localizedString(forKey: (data as! StoryScene).Speaker, value: nil, table: "Story")
+        if ((data as! StoryScene).Speaker != nil && !(data as! StoryScene).Speaker!.isEmpty) {
+            let speaker = gameLogic!.localizedString(forKey: (data as! StoryScene).Speaker!, value: nil, table: "Story")
             let isRoyalSpeaker = (data as! StoryScene).RoyalSpeaker ?? false
-            let speakerImage: String? = (data as! StoryScene).SpeakerImage
+            var speakerImage: String? = (data as! StoryScene).SpeakerImage
+            if (speakerImage == nil) {
+                speakerImage = gameLogic?.story?.Characters.first(where: { $0.name == (data as! StoryScene).Speaker! })?.model
+            }
             let imageRotation: Float? = (data as! StoryScene).Rotation
             var speakerAreaNode = shakeNode.childNode(withName: "//SpeakerArea") as? SKSpriteNode
             
