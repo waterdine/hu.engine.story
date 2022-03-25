@@ -129,20 +129,20 @@ class StoryLogic: CutSceneLogic {
     override func processText(line: TextLine) {
         super.processText(line: line)
         
-        var speaker = character
+        var currentCharacter = character
         if (!line.character.isEmpty) {
-            speaker = characters.first(where: { $0.speaker == line.character })
+            currentCharacter = characters.first(where: { $0.speaker == line.character })
         }
         
-        if (speaker != nil) {
+        if (currentCharacter != nil) {
             let speakerRoyalLabel = shakeNode.childNode(withName: "//SpeakerRoyal") as! SKLabelNode
             let speakerLabel = shakeNode.childNode(withName: "//Speaker") as! SKLabelNode
-            if (speaker!.isRoyalSpeaker) {
-                speakerRoyalLabel.text = speaker?.name
+            if (currentCharacter!.isRoyalSpeaker) {
+                speakerRoyalLabel.text = currentCharacter?.speaker
                 speakerRoyalLabel.isHidden = false
                 speakerLabel.isHidden = true
             } else {
-                speakerLabel.text = speaker?.name
+                speakerLabel.text = currentCharacter?.speaker
                 speakerRoyalLabel.isHidden = true
                 speakerLabel.isHidden = false
             }
