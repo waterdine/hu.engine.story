@@ -22,6 +22,7 @@ class CharacterLogic: GameSubScene {
     public init(gameLogic: GameLogic?, shakeNode: SKNode, startHidden: Bool, isRoyalSpeaker: Bool, speaker: String, speakerImage: String?, imageRotation: Float?, speakerAreaNode: SKSpriteNode?, scale: CGFloat, position: CGFloat) {
         super.init(gameLogic: gameLogic)
 
+        self.speaker = speaker
         speakerImageNode = SKSpriteNode()
         self.addChild(speakerImageNode!)
         
