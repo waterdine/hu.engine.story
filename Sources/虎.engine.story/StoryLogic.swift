@@ -37,6 +37,7 @@ class StoryLogic: CutSceneLogic {
         }
         
         let speakerImageNode = shakeNode.childNode(withName: "//SpeakerImage") as? SKSpriteNode
+        speakerImageNode?.texture = nil
         let scale = (speakerImageNode?.userData!["scale"] as! CGFloat)
         
         let speakerRoyalLabel = shakeNode.childNode(withName: "//SpeakerRoyal") as! SKLabelNode
