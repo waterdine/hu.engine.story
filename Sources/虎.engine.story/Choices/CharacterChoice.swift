@@ -1,6 +1,6 @@
 //
 //  CharacterChoice.swift
-//  TheAmericat iOS
+//  虎.engine.story iOS
 //
 //  Created by ito.antonia on 27/03/2021.
 //
@@ -8,8 +8,8 @@
 import SpriteKit
 import 虎_engine_base
 
-enum CatType {
-	case MCat, FCat, None
+enum PlayerType {
+	case M, F, None
 }
 
 #if os(OSX)
@@ -22,15 +22,15 @@ typealias UITextField = NSTextField
 class CharacterChoiceLogic: GameScene, UITextFieldDelegate {
 
 	var createArea: SKSpriteNode?
-	var fCatArea: SKSpriteNode?
-	var mCatArea: SKSpriteNode?
+	var fArea: SKSpriteNode?
+	var mArea: SKSpriteNode?
 	var nameArea: SKSpriteNode?
 	var selectedNodeBorder: SKSpriteNode?
 	var nameAreaLabel: SKLabelNode?
 	var nameField: UITextField?
 	
-	var catName: String = "Press to edit..."
-	var catType: CatType = .None
+	var playerName: String = "Press to edit..."
+	var playerType: PlayerType = .None
 	
 	class func newScene(gameLogic: GameLogic) -> CharacterChoiceLogic {
         guard let scene = gameLogic.loadScene(scene: "Default.CharacterChoice", classType: CharacterChoiceLogic.classForKeyedUnarchiver()) as? CharacterChoiceLogic else {
@@ -44,8 +44,8 @@ class CharacterChoiceLogic: GameScene, UITextFieldDelegate {
 	override func didMove(to view: SKView) {
 		super.didMove(to: view)
 		nameArea = self.childNode(withName: "//NameArea") as? SKSpriteNode
-		fCatArea = self.childNode(withName: "//FCatArea") as? SKSpriteNode
-		mCatArea = self.childNode(withName: "//MCatArea") as? SKSpriteNode
+		fArea = self.childNode(withName: "//FArea") as? SKSpriteNode
+		mArea = self.childNode(withName: "//MArea") as? SKSpriteNode
 		createArea = self.childNode(withName: "//CreateArea") as? SKSpriteNode
 		nameAreaLabel = self.childNode(withName: "//NameAreaLabel") as? SKLabelNode
 		selectedNodeBorder = self.childNode(withName: "//SelectedNodeBorder") as? SKSpriteNode
@@ -62,23 +62,23 @@ class CharacterChoiceLogic: GameScene, UITextFieldDelegate {
     override func interactionEnded(_ point: CGPoint, timestamp: TimeInterval) {
 		if (nameArea!.frame.contains(point)) {
 			nameField?.becomeFirstResponder()
-			catName = nameAreaLabel!.text!
+			playerName = nameAreaLabel!.text!
 			nameAreaLabel!.text = ""
 #if !os(OSX)
 			nameField!.text = ""
 #endif
-		} else if (fCatArea!.frame.contains(point)) {
-			catType = .FCat
+		} else if (fArea!.frame.contains(point)) {
+			playerType = .F
 			selectedNodeBorder?.isHidden = false
-			selectedNodeBorder?.position = fCatArea!.position
-		} else if (mCatArea!.frame.contains(point)) {
-			catType = .MCat
+			selectedNodeBorder?.position = fArea!.position
+		} else if (mArea!.frame.contains(point)) {
+            playerType = .M
 			selectedNodeBorder?.isHidden = false
-			selectedNodeBorder?.position = mCatArea!.position
+			selectedNodeBorder?.position = mArea!.position
 		} else if (createArea!.frame.contains(point)) {
-			if (catType != .None && catName != "" && catName != "Press to edit...") {
-                self.gameLogic!.gameState.variables["PlayerName"] = catName
-				if (catType == .FCat) {
+			if (playerType != .None && playerName != "" && playerName != "Press to edit...") {
+                self.gameLogic!.gameState.variables["PlayerName"] = playerName
+				if (playerType == .F) {
                     self.gameLogic!.gameState.variables["PlayerPronoun1"] = "She"
                     self.gameLogic!.gameState.variables["PlayerPronoun2"] = "Hers"
                     self.gameLogic!.gameState.variables["PlayerPronoun3"] = "Her"
@@ -100,7 +100,7 @@ class CharacterChoiceLogic: GameScene, UITextFieldDelegate {
                     self.gameLogic!.gameState.variables["OppositePronoun7"] = "Himself"
                     self.gameLogic!.gameState.variables["OppositePronoun8"] = "himself"
                     self.gameLogic!.gameState.variables["OppositePronoun9"] = "guy"
-				} else if (catType == .MCat) {
+				} else if (playerType == .Ms) {
                     self.gameLogic!.gameState.variables["PlayerPronoun1"] = "He"
                     self.gameLogic!.gameState.variables["PlayerPronoun2"] = "His"
                     self.gameLogic!.gameState.variables["PlayerPronoun3"] = "Him"
@@ -128,10 +128,10 @@ class CharacterChoiceLogic: GameScene, UITextFieldDelegate {
 			}
 		} else {
 			nameField?.resignFirstResponder()
-			if (catName == "") {
-				catName = "Press to edit..."
+			if (playerName == "") {
+                playerName = "Press to edit..."
 			}
-			nameAreaLabel!.text = catName
+			nameAreaLabel!.text = playerName
 		}
 	}
 	
@@ -158,17 +158,17 @@ class CharacterChoiceLogic: GameScene, UITextFieldDelegate {
 			return false
 		}
 		
-		catName = candidateString
-		nameAreaLabel!.text = catName
+		playerName = candidateString
+		nameAreaLabel!.text = playerName
 		return true
 	}
 	
 	func textFieldShouldReturn(_ textField: UITextField) -> Bool {
 		nameField?.resignFirstResponder()
 #if !os(OSX)
-		catName = (nameField?.text)!
+		playerName = (nameField?.text)!
 #endif
-		nameAreaLabel!.text = catName
+		nameAreaLabel!.text = playerName
 		return true
 	}
 }
