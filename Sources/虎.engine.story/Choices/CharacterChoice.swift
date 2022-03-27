@@ -100,7 +100,7 @@ class CharacterChoiceLogic: GameScene, UITextFieldDelegate {
                     self.gameLogic!.gameState.variables["OppositePronoun7"] = "Himself"
                     self.gameLogic!.gameState.variables["OppositePronoun8"] = "himself"
                     self.gameLogic!.gameState.variables["OppositePronoun9"] = "guy"
-				} else if (playerType == .Ms) {
+				} else if (playerType == .M) {
                     self.gameLogic!.gameState.variables["PlayerPronoun1"] = "He"
                     self.gameLogic!.gameState.variables["PlayerPronoun2"] = "His"
                     self.gameLogic!.gameState.variables["PlayerPronoun3"] = "Him"
