@@ -614,13 +614,17 @@ class ChapterTransitionScene: VisualScene {
     
     override func toScriptLines(index: Int, strings: [String : String], indexMap: [Int : String]) -> [String] {
         var lines: [String] = ["/* " + strings[HorizontalNumber]! + " */\n"]
-        
+         
         lines.append(contentsOf: super.toScriptLines(index: index, strings: strings, indexMap: indexMap))
         
         lines.append("HorizontalNumber: " + strings[HorizontalNumber]!)
         lines.append("HorizontalTitle: " + strings[HorizontalTitle]!)
-        lines.append("VerticalNumber: " + strings[VerticalNumber!]!)
-        lines.append("VerticalTitle: " + strings[VerticalTitle!]!)
+        if (VerticalNumber != nil) {
+            lines.append("VerticalNumber: " + strings[VerticalNumber!]!)
+        }
+        if (VerticalTitle != nil) {
+            lines.append("VerticalTitle: " + strings[VerticalTitle!]!)
+        }
         
         return lines
     }
