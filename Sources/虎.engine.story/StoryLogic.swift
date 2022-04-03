@@ -70,14 +70,15 @@ class StoryLogic: CutSceneLogic {
             for textLine in textList! {
                 let speaker = gameLogic!.localizedString(forKey: textLine.character, value: nil, table: "Story")
                 if (!characters.contains(where: { $0.speaker == speaker })) {
-                    let isRoyalSpeaker = false
-                    var speakerAreaNode = shakeNode.childNode(withName: "//SpeakerArea") as? SKSpriteNode
-                    
-                    if (isRoyalSpeaker) {
-                        speakerAreaNode = shakeNode.childNode(withName: "//SpeakerAreaRoyal") as? SKSpriteNode
+                    let character = gameLogic?.story?.Characters.first(where: { $0.name == textLine.character })
+                    if (character != nil) {
+                        var speakerAreaNode = shakeNode.childNode(withName: "//SpeakerArea") as? SKSpriteNode
+                        
+                        if (character!.royal) {
+                            speakerAreaNode = shakeNode.childNode(withName: "//SpeakerAreaRoyal") as? SKSpriteNode
+                        }
+                        characters.append(CharacterLogic(gameLogic: gameLogic, shakeNode: shakeNode, startHidden: startHidden, isRoyalSpeaker: character!.royal, speaker: speaker, speakerImage: character!.model, imageRotation: 0.0, speakerAreaNode: speakerAreaNode, scale: scale, position: speakerImageNode!.position.y))
                     }
-                    let speakerImage: String? = gameLogic?.story?.Characters.first(where: { $0.name == textLine.character })?.model
-                    characters.append(CharacterLogic(gameLogic: gameLogic, shakeNode: shakeNode, startHidden: startHidden, isRoyalSpeaker: isRoyalSpeaker, speaker: speaker, speakerImage: speakerImage, imageRotation: 0.0, speakerAreaNode: speakerAreaNode, scale: scale, position: speakerImageNode!.position.y))
                 }
             }
         }
