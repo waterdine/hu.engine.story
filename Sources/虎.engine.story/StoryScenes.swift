@@ -355,6 +355,8 @@ class ChoiceScene: VisualScene {
     var Flag: String? = nil
     var VariableToSet: String? = nil
     var DirectingText: String = ""
+    var Timeout: Int? = nil
+    var DefaultChoice: Int? = nil
     var Choices: [Choice]? = nil
     var Image: String = ""
     
@@ -363,6 +365,8 @@ class ChoiceScene: VisualScene {
         case Flag
         case VariableToSet
         case DirectingText
+        case Timeout
+        case DefaultChoice
         case Choices
         case HideOnFlag
         case Variables
@@ -390,11 +394,17 @@ class ChoiceScene: VisualScene {
         if (scriptParameters["Image"] != nil) {
             Image = scriptParameters["Image"]!
         }
+        
+        if (scriptParameters["Timeout"] != nil) {
+            Timeout = Int(scriptParameters["Timeout"]!)
+        }
     }
     
     required init(from decoder: Decoder) throws {
         try super.init(from: decoder)
         let container = try decoder.container(keyedBy: ChoiceCodingKeys.self)
+        
+        DefaultChoice = try container.decodeIfPresent(Int.self, forKey: ChoiceCodingKeys.DefaultChoice)
         
         Choices = try container.decodeIfPresent([Choice].self, forKey: ChoiceCodingKeys.Choices)
         if (Choices == nil) {
@@ -465,6 +475,8 @@ class ChoiceScene: VisualScene {
         try container.encode(Choices, forKey: ChoiceCodingKeys.Choices)
         try container.encodeIfPresent(Flag, forKey: ChoiceCodingKeys.Flag)
         try container.encodeIfPresent(VariableToSet, forKey: ChoiceCodingKeys.VariableToSet)
+        try container.encodeIfPresent(Timeout, forKey: ChoiceCodingKeys.VariableToSet)
+        try container.encodeIfPresent(DefaultChoice, forKey: ChoiceCodingKeys.DefaultChoice)
         try container.encode(DirectingText, forKey: ChoiceCodingKeys.DirectingText)
         try container.encode(Image, forKey: ChoiceCodingKeys.Image)
     }
@@ -474,6 +486,10 @@ class ChoiceScene: VisualScene {
         
         if (Flag != nil) {
             scriptLine += ", Flag: " + Flag!
+        }
+        
+        if (Timeout != nil) {
+            scriptLine += ", Timeout: \(Timeout!)"
         }
         
         if (VariableToSet != nil) {
@@ -541,6 +557,15 @@ class ChoiceScene: VisualScene {
                         scriptLine += " // "
                     }
                     scriptLine += "Break: \(Choice.Break!)"
+                }
+                
+                if (DefaultChoice != nil && DefaultChoice! == Index) {
+                    if (separator) {
+                        scriptLine += ", "
+                    } else {
+                        scriptLine += " // "
+                    }
+                    scriptLine += "Default"
                 }
                 
                 lines.append(scriptLine)

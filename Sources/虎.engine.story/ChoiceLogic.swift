@@ -14,6 +14,7 @@ class ChoiceLogic: GameScene {
 	
 	var choiceNodes: [SKSpriteNode] = []
     var choiceLabels: [SKLabelNode] = []
+    var timeoutTime: TimeInterval? = nil
 	
 	class func newScene(gameLogic: GameLogic) -> ChoiceLogic {
         let scene: ChoiceLogic = gameLogic.loadScene(scene: "Default.Choice", classType: ChoiceLogic.classForKeyedUnarchiver()) as! ChoiceLogic
@@ -64,7 +65,7 @@ class ChoiceLogic: GameScene {
 			choice2Node?.size.height = max(choice3Node!.frame.height, choice2Label!.frame.height)
 			choice2Node?.position.y = (choice1Node?.position.y)! - (choice1Node?.frame.height)! * 1.2
 		}*/
-		
+        
 		let storyImage = self.childNode(withName: "//StoryImage") as? SKSpriteNode
         let image: String = (data as! ChoiceScene).Image
         let imageUrl = gameLogic?.loadUrl(forResource: image, withExtension: ".png", subdirectory: "Images/Backgrounds")
@@ -76,6 +77,23 @@ class ChoiceLogic: GameScene {
 		}
 	}
 	
+    // updatefunction with timeout/autopick
+    override func update(_ currentTime: TimeInterval) {
+        if ((data as! ChoiceScene).Timeout != nil || (data as! ChoiceScene).Timeout! > 0) {
+            timeoutTime = currentTime + Double((data as! ChoiceScene).Timeout!)
+        }
+        if (timeoutTime != nil && currentTime >= timeoutTime!) {
+            if ((data as! ChoiceScene).DefaultChoice != nil) {
+                let choice = (data as! ChoiceScene).Choices?[(data as! ChoiceScene).DefaultChoice!]
+                if (choice!.SkipTo != nil) {
+                    self.gameLogic?.setScene(sceneIndex: choice!.SkipTo!, script: nil)
+                }
+            } else {
+                self.gameLogic?.nextScene()
+            }
+        }
+    }
+    
 	override func interactionEnded(_ point: CGPoint, timestamp: TimeInterval) {
 		if (super.handleToolbar(point)) {
 			gameMenu?.isHidden = false
