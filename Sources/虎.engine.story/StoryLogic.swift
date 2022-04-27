@@ -83,6 +83,7 @@ class StoryLogic: CutSceneLogic {
             }
         }
         
+        speakerImageNode!.removeAllChildren()
         for character in characters {
             speakerImageNode!.addChild(character)
         }

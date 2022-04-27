@@ -121,6 +121,14 @@ class CharacterLogic: GameSubScene {
             speakerImageNode?.position = CGPoint(x: self.frame.maxX + halfWidth, y: (speakerImageNode?.position.y)!)
             speakerImageNode?.run(SKAction.moveTo(x: (speakerAreaNode.position.x), duration: 0.7))
             speakerImageNode?.isHidden = false
+        /*} else if (command.textString == "[exitleft]") {
+            speakerImageNode?.position = CGPoint(x: self.frame.minX - halfWidth, y: (speakerImageNode?.position.y)!)
+            speakerImageNode?.run(SKAction.moveTo(x: (speakerAreaNode.position.x), duration: 0.7))
+            speakerImageNode?.isHidden = false
+        } else if (command.textString == "[exitright]") {
+            speakerImageNode?.position = CGPoint(x: self.frame.maxX + halfWidth, y: (speakerImageNode?.position.y)!)
+            speakerImageNode?.run(SKAction.moveTo(x: (speakerAreaNode.position.x), duration: 0.7))
+            speakerImageNode?.isHidden = false*/
         } else if (command.textString == "[fadeout]") {
             speakerImageNode?.run(SKAction.fadeOut(withDuration: 0.7))
         }
