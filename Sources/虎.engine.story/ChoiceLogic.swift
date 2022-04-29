@@ -79,7 +79,7 @@ class ChoiceLogic: GameScene {
 	
     // updatefunction with timeout/autopick
     override func update(_ currentTime: TimeInterval) {
-        if ((data as! ChoiceScene).Timeout != nil || (data as! ChoiceScene).Timeout! > 0) {
+        if ((data as! ChoiceScene).Timeout != nil && (data as! ChoiceScene).Timeout! > 0) {
             timeoutTime = currentTime + Double((data as! ChoiceScene).Timeout!)
         }
         if (timeoutTime != nil && currentTime >= timeoutTime!) {
