@@ -506,11 +506,11 @@ class ChoiceScene: VisualScene {
         
         lines.append(contentsOf: super.toScriptLines(index: index, strings: strings, indexMap: indexMap))
         
-        lines.append("DirectingText: " + strings[DirectingText]!)
+        lines.append("DirectingText: \(strings[DirectingText] ?? DirectingText)")
         
         if (Choices != nil) {
             for (Index, Choice) in Choices!.enumerated() {
-                var scriptLine = "Choice\(Index+1)Text: " + strings[Choice.Text]!
+                var scriptLine = "Choice\(Index+1)Text: \(strings[Choice.Text] ?? Choice.Text)"
                 
                 var separator: Bool = false
                 

@@ -57,7 +57,7 @@ open class CutSceneLogic: GameScene {
 	var maskTexture2: SKTexture? = nil
 	
 	class func newScene(gameLogic: GameLogic) -> CutSceneLogic {
-        let scene: CutSceneLogic = gameLogic.loadScene(scene: "Default.CutScene", classType: CutSceneLogic.classForKeyedUnarchiver()) as! CutSceneLogic
+        let scene: CutSceneLogic = gameLogic.loadScene(scene: "Default.CutScene", resourceBundle: "虎.engine.story", classType: CutSceneLogic.classForKeyedUnarchiver()) as! CutSceneLogic
 
 		scene.requiresMusic = true
         let fontSizeScale: CGFloat = CGFloat(Float.init(gameLogic.localizedString(forKey: "FontScale", value: nil, table: "Story")) ?? 1.0)

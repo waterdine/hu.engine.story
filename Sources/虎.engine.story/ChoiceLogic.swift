@@ -17,7 +17,7 @@ class ChoiceLogic: GameScene {
     var timeoutTime: TimeInterval? = nil
 	
 	class func newScene(gameLogic: GameLogic) -> ChoiceLogic {
-        let scene: ChoiceLogic = gameLogic.loadScene(scene: "Default.Choice", classType: ChoiceLogic.classForKeyedUnarchiver()) as! ChoiceLogic
+        let scene: ChoiceLogic = gameLogic.loadScene(scene: "Default.Choice", resourceBundle: "虎.engine.story", classType: ChoiceLogic.classForKeyedUnarchiver()) as! ChoiceLogic
 
 		scene.requiresMusic = true
 		

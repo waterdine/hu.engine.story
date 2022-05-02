@@ -16,7 +16,7 @@ class StoryLogic: CutSceneLogic {
     var characters: [CharacterLogic] = []
 	
 	override class func newScene(gameLogic: GameLogic) -> StoryLogic {
-        let scene: StoryLogic = gameLogic.loadScene(scene: "Default.Story", classType: StoryLogic.classForKeyedUnarchiver()) as! StoryLogic
+        let scene: StoryLogic = gameLogic.loadScene(scene: "Default.Story", resourceBundle: "虎.engine.story", classType: StoryLogic.classForKeyedUnarchiver()) as! StoryLogic
  
 		scene.stickyText = false
 		scene.requiresMusic = true

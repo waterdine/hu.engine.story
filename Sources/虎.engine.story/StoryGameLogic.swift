@@ -26,6 +26,10 @@ public func RegisterStoryGameSceneInitialisers(sceneListSerialiser: inout SceneL
     sceneListSerialiser.serialisers.append(StoryGameSceneSerialiser())
 }
 
+public func LoadStoryGameModuleResourceBundle(bundles: inout [String:Bundle]) {
+    bundles["虎.engine.story"] = Bundle.init(url: Bundle.main.resourceURL!.appendingPathComponent("虎.engine.story_虎.engine.story.bundle"))!
+}
+
 public func RegisterStoryGameSettings(settings: inout [String])
 {
     settings.append("FontScale");

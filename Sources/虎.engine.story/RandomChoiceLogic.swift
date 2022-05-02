@@ -14,7 +14,7 @@ import 虎_engine_base
 class RandomChoiceLogic: GameScene {
 	
 	class func newScene(gameLogic: GameLogic) -> ChoiceLogic {
-        let scene: ChoiceLogic = gameLogic.loadScene(scene: "Default.Choice", classType: ChoiceLogic.classForKeyedUnarchiver()) as! ChoiceLogic
+        let scene: ChoiceLogic = gameLogic.loadScene(scene: "Default.Choice", resourceBundle: "虎.engine.story", classType: ChoiceLogic.classForKeyedUnarchiver()) as! ChoiceLogic
 
 		return scene
 	}
