@@ -226,16 +226,20 @@ class StoryGameSceneSerialiser: BaseSceneSerialiser {
             case "Story":
                 lines.append(contentsOf: (scene as! StoryScene).toStringsLines(index: index, strings: strings))
                 for textLine in (scene as! StoryScene).Text {
-                    if (!textLine.textString.starts(with: "[") && !textLine.textString.isEmpty) {
-                        lines.append("\"" + textLine.textString + "\" = \"" + strings[textLine.textString]!.replacingOccurrences(of: "\"", with: "\\\"") + "\";")
+                    if let textString = textLine.textString {
+                        if (!textString.starts(with: "[") && !textString.isEmpty) {
+                            lines.append("\"\(textString)\" = \"" + strings[textString]!.replacingOccurrences(of: "\"", with: "\\\"") + "\";")
+                        }
                     }
                 }
                 break
             case "CutScene":
                 lines.append(contentsOf: (scene as! CutSceneScene).toStringsLines(index: index, strings: strings))
                 for textLine in (scene as! CutSceneScene).Text {
-                    if (!textLine.textString.starts(with: "[") && !textLine.textString.isEmpty) {
-                        lines.append("\"" + textLine.textString + "\" = \"" + strings[textLine.textString]!.replacingOccurrences(of: "\"", with: "\\\"") + "\";")
+                    if let textString = textLine.textString {
+                        if (!textString.starts(with: "[") && !textString.isEmpty) {
+                            lines.append("\"\(textString)\" = \"" + strings[textString]!.replacingOccurrences(of: "\"", with: "\\\"") + "\";")
+                        }
                     }
                 }
                 break

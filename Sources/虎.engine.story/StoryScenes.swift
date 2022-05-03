@@ -181,10 +181,12 @@ class CutSceneScene: VisualScene {
         lines.append(contentsOf: super.toScriptLines(index: index, strings: strings, indexMap: indexMap))
         
         for textLine in Text {
-            if (strings[textLine.textString] == nil) {
-                lines.append(textLine.textString)
-            } else {
-                lines.append(strings[textLine.textString]!)
+            if let textString = textLine.textString {
+                if let translatedTextString = strings[textString] {
+                    lines.append(translatedTextString)
+                } else {
+                    lines.append(textString)
+                }
             }
         }
         

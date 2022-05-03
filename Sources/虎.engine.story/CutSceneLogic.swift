@@ -608,7 +608,7 @@ open class CutSceneLogic: GameScene {
 		let textList: [TextLine]? = (data as! CutSceneScene).Text
 		if (textList != nil && textList!.count > self.currentTextIndex) {
 			let nextLine = (textList![self.currentTextIndex].textString)
-            return nextLine.hasPrefix("[") && nextLine.hasSuffix("]")
+            return nextLine?.hasPrefix("[") ?? false && nextLine?.hasSuffix("]") ?? false
 		} else {
 			return false
 		}
@@ -627,21 +627,22 @@ open class CutSceneLogic: GameScene {
 	}
 	
 	func processTextCommand(command: TextLine) {
-        if (command.textString == "[instant]") {
+        let textCommand = command.textString ?? ""
+        if (textCommand == "[instant]") {
 			instantText = true
-		} else if (command.textString == "[clear]") {
+		} else if (textCommand == "[clear]") {
 			waitfornext = true
 			enableNextSceneIndicator()
-		} else if (command.textString == "[fade]") {
+		} else if (textCommand == "[fade]") {
 			fadeFullText = true
-		} else if (command.textString == "[fasttext]") {
+		} else if (textCommand == "[fasttext]") {
 			fastText = true
-		} else if (command.textString == "[instantword]") {
+		} else if (textCommand == "[instantword]") {
 			instantWordText = true
-		} else if (command.textString == "[camerashake]") {
+		} else if (textCommand == "[camerashake]") {
 			applyShake = true
-        } else if (command.textString.starts(with: "[panto:")) {
-			var pos = command.textString.replacingOccurrences(of: "[panto:", with: "")
+        } else if (textCommand.starts(with: "[panto:")) {
+			var pos = textCommand.replacingOccurrences(of: "[panto:", with: "")
 			pos = pos.trimmingCharacters(in: ["]"])
 			let parts: [Substring] = pos.split(separator: ",")
 			if (parts.count == 1) {
@@ -654,12 +655,12 @@ open class CutSceneLogic: GameScene {
 				wantedOffset.width = CGFloat(offsetX!)
 				wantedOffset.height = CGFloat(offsetY!)
 			}
-		} else if (command.textString.starts(with: "[zoom:")) {
-			var scale = command.textString.replacingOccurrences(of: "[zoom:", with: "")
+		} else if (textCommand.starts(with: "[zoom:")) {
+			var scale = textCommand.replacingOccurrences(of: "[zoom:", with: "")
 			scale = scale.trimmingCharacters(in: ["]"])
 			wantedScale = Float.init(scale)!
-		} else if (command.textString.starts(with: "[sound:")) {
-			var file = command.textString.replacingOccurrences(of: "[sound:", with: "")
+		} else if (textCommand.starts(with: "[sound:")) {
+			var file = textCommand.replacingOccurrences(of: "[sound:", with: "")
 			file = file.trimmingCharacters(in: ["]"])
             let url = gameLogic?.loadUrl(forResource: file, withExtension: ".mp3", subdirectory: "Sound")
             if (url != nil) {
@@ -679,8 +680,8 @@ open class CutSceneLogic: GameScene {
                     }))
                 }
             }
-		} else if (command.textString.starts(with: "[soundloop:")) {
-			var musicFile = command.textString.replacingOccurrences(of: "[soundloop:", with: "")
+		} else if (textCommand.starts(with: "[soundloop:")) {
+			var musicFile = textCommand.replacingOccurrences(of: "[soundloop:", with: "")
 			musicFile = musicFile.trimmingCharacters(in: ["]"])
 			do {
 				if (self.gameLogic?.loopSound != nil) {
@@ -697,28 +698,28 @@ open class CutSceneLogic: GameScene {
 				}
 			} catch  {
 			}
-		} else if (command.textString.starts(with: "[soundloopstop]")) {
+		} else if (textCommand.starts(with: "[soundloopstop]")) {
 			if (self.gameLogic?.loopSound != nil) {
 				self.gameLogic?.loopSound?.stop()
 			}
-		} else if (command.textString.starts(with: "[fadecover]")) {
+		} else if (textCommand.starts(with: "[fadecover]")) {
 			let cover = shakeNode.childNode(withName: "//Cover") as? SKSpriteNode
 			cover?.run(SKAction.fadeOut(withDuration: 1.0))
 			let textLabel = shakeNode.childNode(withName: "//Text") as? SKLabelNode
 			textLabel?.run(SKAction.fadeIn(withDuration: 1.0))
 			let coverTextLabel = shakeNode.childNode(withName: "//CoverText") as? SKLabelNode
 			coverTextLabel?.run(SKAction.fadeOut(withDuration: 1.0))
-		} else if (command.textString.starts(with: "[hidecover]")) {
+		} else if (textCommand.starts(with: "[hidecover]")) {
 			let cover = shakeNode.childNode(withName: "//Cover") as? SKSpriteNode
 			cover?.alpha = 0.0
 			let textLabel = shakeNode.childNode(withName: "//Text") as? SKLabelNode
 			textLabel?.alpha = 1.0
 			let coverTextLabel = shakeNode.childNode(withName: "//CoverText") as? SKLabelNode
 			coverTextLabel?.alpha = 0.0
-		} else if (command.textString.starts(with: "[changemask]")) {
+		} else if (textCommand.starts(with: "[changemask]")) {
 			let storyImage = shakeNode.childNode(withName: "//StoryImage") as? SKSpriteNode
 			storyImage?.shader?.uniformNamed("u_maskTexture")?.textureValue = maskTexture2
-		} else if (command.textString.starts(with: "[blackcover]")) {
+		} else if (textCommand.starts(with: "[blackcover]")) {
 			if (waitfornext) {
 				queuedBlackCover = true
 			} else {
@@ -733,22 +734,22 @@ open class CutSceneLogic: GameScene {
 				coverTextLabel?.alpha = 0.0
 				coverTextLabel?.run(SKAction.fadeIn(withDuration: 0.2))
 			}
-		} else if (command.textString == "[pause]") {
+		} else if (textCommand == "[pause]") {
 			pauseFor = 1.0
-		} else if (command.textString == "[longpause]") {
+		} else if (textCommand == "[longpause]") {
 			pauseFor = 5.0
-		} else if (command.textString == "[nextscene]") {
+		} else if (textCommand == "[nextscene]") {
 			readyForNextScene = true
-		} else if (command.textString == "[center]") {
+		} else if (textCommand == "[center]") {
 			centerText = true
-		} else if (command.textString == "[skipindent]") {
+		} else if (textCommand == "[skipindent]") {
 			skipIndent = true
-		} else if (command.textString.starts(with: "[stopmusic]")) {
+		} else if (textCommand.starts(with: "[stopmusic]")) {
 			if (self.gameLogic?.player != nil) {
 				self.gameLogic?.player?.stop()
 				self.gameLogic?.player = nil
 			}
-		} else if (command.textString.starts(with: "[fademusic]")) {
+		} else if (textCommand.starts(with: "[fademusic]")) {
 			if (self.gameLogic?.fadePlayer != nil) {
 				self.gameLogic?.fadePlayer?.stop()
 			}
@@ -769,7 +770,7 @@ open class CutSceneLogic: GameScene {
         } else if (fixedText != "" && fixedText != "\t" && !skipIndent) {
             newText += "\t"
         }
-        var nextLine = gameLogic!.localizedString(forKey: line.textString, value: nil, table: self.gameLogic!.getChapterTable())
+        var nextLine = gameLogic!.localizedString(forKey: line.textString!, value: nil, table: self.gameLogic!.getChapterTable())
         nextLine = self.gameLogic!.unwrapVariables(text: nextLine)
         newText += nextLine
     }
