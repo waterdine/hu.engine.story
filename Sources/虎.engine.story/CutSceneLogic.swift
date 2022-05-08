@@ -627,152 +627,156 @@ open class CutSceneLogic: GameScene {
 	}
 	
 	func processTextCommand(command: TextLine) {
-        let textCommand = command.textString ?? ""
-        if (textCommand == "[instant]") {
-			instantText = true
-		} else if (textCommand == "[clear]") {
-			waitfornext = true
-			enableNextSceneIndicator()
-		} else if (textCommand == "[fade]") {
-			fadeFullText = true
-		} else if (textCommand == "[fasttext]") {
-			fastText = true
-		} else if (textCommand == "[instantword]") {
-			instantWordText = true
-		} else if (textCommand == "[camerashake]") {
-			applyShake = true
-        } else if (textCommand.starts(with: "[panto:")) {
-			var pos = textCommand.replacingOccurrences(of: "[panto:", with: "")
-			pos = pos.trimmingCharacters(in: ["]"])
-			let parts: [Substring] = pos.split(separator: ",")
-			if (parts.count == 1) {
-				let offset = Float.init(parts[0])
-				wantedOffset.width = CGFloat(offset!)
-				wantedOffset.height = CGFloat(offset!)
-			} else if (parts.count == 2) {
-				let offsetX = Float.init(parts[0])
-				let offsetY = Float.init(parts[1])
-				wantedOffset.width = CGFloat(offsetX!)
-				wantedOffset.height = CGFloat(offsetY!)
-			}
-		} else if (textCommand.starts(with: "[zoom:")) {
-			var scale = textCommand.replacingOccurrences(of: "[zoom:", with: "")
-			scale = scale.trimmingCharacters(in: ["]"])
-			wantedScale = Float.init(scale)!
-		} else if (textCommand.starts(with: "[sound:")) {
-			var file = textCommand.replacingOccurrences(of: "[sound:", with: "")
-			file = file.trimmingCharacters(in: ["]"])
-            let url = gameLogic?.loadUrl(forResource: file, withExtension: ".mp3", subdirectory: "Sound")
-            if (url != nil) {
-                if (waitfornext) {
-                    queuedSound = url
-                } else {
-                    self.run(SKAction.run({[url] in
-                        if (self.gameLogic?.loopSound != nil) {
-                            self.gameLogic?.loopSound?.stop()
-                        }
-                        if (url != nil) {
-                            try! self.gameLogic?.loopSound = AVAudioPlayer(contentsOf: url!)
-                            self.gameLogic?.loopSound?.numberOfLoops = 0
+        if (command.languages.isEmpty || command.languages.contains(gameLogic!.languageCode())) {
+            let textCommand = command.textString ?? ""
+            if (textCommand == "[instant]") {
+                instantText = true
+            } else if (textCommand == "[clear]") {
+                waitfornext = true
+                enableNextSceneIndicator()
+            } else if (textCommand == "[fade]") {
+                fadeFullText = true
+            } else if (textCommand == "[fasttext]") {
+                fastText = true
+            } else if (textCommand == "[instantword]") {
+                instantWordText = true
+            } else if (textCommand == "[camerashake]") {
+                applyShake = true
+            } else if (textCommand.starts(with: "[panto:")) {
+                var pos = textCommand.replacingOccurrences(of: "[panto:", with: "")
+                pos = pos.trimmingCharacters(in: ["]"])
+                let parts: [Substring] = pos.split(separator: ",")
+                if (parts.count == 1) {
+                    let offset = Float.init(parts[0])
+                    wantedOffset.width = CGFloat(offset!)
+                    wantedOffset.height = CGFloat(offset!)
+                } else if (parts.count == 2) {
+                    let offsetX = Float.init(parts[0])
+                    let offsetY = Float.init(parts[1])
+                    wantedOffset.width = CGFloat(offsetX!)
+                    wantedOffset.height = CGFloat(offsetY!)
+                }
+            } else if (textCommand.starts(with: "[zoom:")) {
+                var scale = textCommand.replacingOccurrences(of: "[zoom:", with: "")
+                scale = scale.trimmingCharacters(in: ["]"])
+                wantedScale = Float.init(scale)!
+            } else if (textCommand.starts(with: "[sound:")) {
+                var file = textCommand.replacingOccurrences(of: "[sound:", with: "")
+                file = file.trimmingCharacters(in: ["]"])
+                let url = gameLogic?.loadUrl(forResource: file, withExtension: ".mp3", subdirectory: "Sound")
+                if (url != nil) {
+                    if (waitfornext) {
+                        queuedSound = url
+                    } else {
+                        self.run(SKAction.run({[url] in
+                            if (self.gameLogic?.loopSound != nil) {
+                                self.gameLogic?.loopSound?.stop()
+                            }
+                            if (url != nil) {
+                                try! self.gameLogic?.loopSound = AVAudioPlayer(contentsOf: url!)
+                                self.gameLogic?.loopSound?.numberOfLoops = 0
+                                self.gameLogic?.alignVolumeLevel()
+                                self.gameLogic?.loopSound?.play()
+                            }
+                        }))
+                    }
+                }
+            } else if (textCommand.starts(with: "[soundloop:")) {
+                var musicFile = textCommand.replacingOccurrences(of: "[soundloop:", with: "")
+                musicFile = musicFile.trimmingCharacters(in: ["]"])
+                do {
+                    if (self.gameLogic?.loopSound != nil) {
+                        self.gameLogic?.loopSound?.stop()
+                    }
+                    if (musicFile != "") {
+                        let file = gameLogic?.loadUrl(forResource: musicFile, withExtension: ".mp3", subdirectory: "Sound")
+                        if (file != nil) {
+                            try self.gameLogic?.loopSound = AVAudioPlayer(contentsOf: file!)
+                            self.gameLogic?.loopSound?.numberOfLoops = -1
                             self.gameLogic?.alignVolumeLevel()
                             self.gameLogic?.loopSound?.play()
                         }
-                    }))
+                    }
+                } catch  {
                 }
+            } else if (textCommand.starts(with: "[soundloopstop]")) {
+                if (self.gameLogic?.loopSound != nil) {
+                    self.gameLogic?.loopSound?.stop()
+                }
+            } else if (textCommand.starts(with: "[fadecover]")) {
+                let cover = shakeNode.childNode(withName: "//Cover") as? SKSpriteNode
+                cover?.run(SKAction.fadeOut(withDuration: 1.0))
+                let textLabel = shakeNode.childNode(withName: "//Text") as? SKLabelNode
+                textLabel?.run(SKAction.fadeIn(withDuration: 1.0))
+                let coverTextLabel = shakeNode.childNode(withName: "//CoverText") as? SKLabelNode
+                coverTextLabel?.run(SKAction.fadeOut(withDuration: 1.0))
+            } else if (textCommand.starts(with: "[hidecover]")) {
+                let cover = shakeNode.childNode(withName: "//Cover") as? SKSpriteNode
+                cover?.alpha = 0.0
+                let textLabel = shakeNode.childNode(withName: "//Text") as? SKLabelNode
+                textLabel?.alpha = 1.0
+                let coverTextLabel = shakeNode.childNode(withName: "//CoverText") as? SKLabelNode
+                coverTextLabel?.alpha = 0.0
+            } else if (textCommand.starts(with: "[changemask]")) {
+                let storyImage = shakeNode.childNode(withName: "//StoryImage") as? SKSpriteNode
+                storyImage?.shader?.uniformNamed("u_maskTexture")?.textureValue = maskTexture2
+            } else if (textCommand.starts(with: "[blackcover]")) {
+                if (waitfornext) {
+                    queuedBlackCover = true
+                } else {
+                    let cover = shakeNode.childNode(withName: "//Cover") as? SKSpriteNode
+                    cover?.run(SKAction.fadeIn(withDuration: 0.2))
+                    cover?.color = self.backgroundColor
+                    let textLabel = shakeNode.childNode(withName: "//Text") as? SKLabelNode
+                    textLabel?.run(SKAction.fadeOut(withDuration: 0.2))
+                    textLabel?.alpha = 1.0
+                    let coverTextLabel = shakeNode.childNode(withName: "//CoverText") as? SKLabelNode
+                    coverTextLabel?.removeAllActions()
+                    coverTextLabel?.alpha = 0.0
+                    coverTextLabel?.run(SKAction.fadeIn(withDuration: 0.2))
+                }
+            } else if (textCommand == "[pause]") {
+                pauseFor = 1.0
+            } else if (textCommand == "[longpause]") {
+                pauseFor = 5.0
+            } else if (textCommand == "[nextscene]") {
+                readyForNextScene = true
+            } else if (textCommand == "[center]") {
+                centerText = true
+            } else if (textCommand == "[skipindent]") {
+                skipIndent = true
+            } else if (textCommand.starts(with: "[stopmusic]")) {
+                if (self.gameLogic?.player != nil) {
+                    self.gameLogic?.player?.stop()
+                    self.gameLogic?.player = nil
+                }
+            } else if (textCommand.starts(with: "[fademusic]")) {
+                if (self.gameLogic?.fadePlayer != nil) {
+                    self.gameLogic?.fadePlayer?.stop()
+                }
+                self.gameLogic?.fadePlayer = self.gameLogic?.player
+                if #available(iOS 10.0, *) {
+                    self.gameLogic?.fadePlayer?.setVolume(0, fadeDuration: 3.0)
+                } else {
+                    self.gameLogic?.fadePlayer?.volume = 0;
+                }
+                self.gameLogic?.player = nil
             }
-		} else if (textCommand.starts(with: "[soundloop:")) {
-			var musicFile = textCommand.replacingOccurrences(of: "[soundloop:", with: "")
-			musicFile = musicFile.trimmingCharacters(in: ["]"])
-			do {
-				if (self.gameLogic?.loopSound != nil) {
-					self.gameLogic?.loopSound?.stop()
-				}
-				if (musicFile != "") {
-                    let file = gameLogic?.loadUrl(forResource: musicFile, withExtension: ".mp3", subdirectory: "Sound")
-					if (file != nil) {
-						try self.gameLogic?.loopSound = AVAudioPlayer(contentsOf: file!)
-						self.gameLogic?.loopSound?.numberOfLoops = -1
-                        self.gameLogic?.alignVolumeLevel()
-						self.gameLogic?.loopSound?.play()
-					}
-				}
-			} catch  {
-			}
-		} else if (textCommand.starts(with: "[soundloopstop]")) {
-			if (self.gameLogic?.loopSound != nil) {
-				self.gameLogic?.loopSound?.stop()
-			}
-		} else if (textCommand.starts(with: "[fadecover]")) {
-			let cover = shakeNode.childNode(withName: "//Cover") as? SKSpriteNode
-			cover?.run(SKAction.fadeOut(withDuration: 1.0))
-			let textLabel = shakeNode.childNode(withName: "//Text") as? SKLabelNode
-			textLabel?.run(SKAction.fadeIn(withDuration: 1.0))
-			let coverTextLabel = shakeNode.childNode(withName: "//CoverText") as? SKLabelNode
-			coverTextLabel?.run(SKAction.fadeOut(withDuration: 1.0))
-		} else if (textCommand.starts(with: "[hidecover]")) {
-			let cover = shakeNode.childNode(withName: "//Cover") as? SKSpriteNode
-			cover?.alpha = 0.0
-			let textLabel = shakeNode.childNode(withName: "//Text") as? SKLabelNode
-			textLabel?.alpha = 1.0
-			let coverTextLabel = shakeNode.childNode(withName: "//CoverText") as? SKLabelNode
-			coverTextLabel?.alpha = 0.0
-		} else if (textCommand.starts(with: "[changemask]")) {
-			let storyImage = shakeNode.childNode(withName: "//StoryImage") as? SKSpriteNode
-			storyImage?.shader?.uniformNamed("u_maskTexture")?.textureValue = maskTexture2
-		} else if (textCommand.starts(with: "[blackcover]")) {
-			if (waitfornext) {
-				queuedBlackCover = true
-			} else {
-				let cover = shakeNode.childNode(withName: "//Cover") as? SKSpriteNode
-				cover?.run(SKAction.fadeIn(withDuration: 0.2))
-				cover?.color = self.backgroundColor
-				let textLabel = shakeNode.childNode(withName: "//Text") as? SKLabelNode
-				textLabel?.run(SKAction.fadeOut(withDuration: 0.2))
-				textLabel?.alpha = 1.0
-				let coverTextLabel = shakeNode.childNode(withName: "//CoverText") as? SKLabelNode
-				coverTextLabel?.removeAllActions()
-				coverTextLabel?.alpha = 0.0
-				coverTextLabel?.run(SKAction.fadeIn(withDuration: 0.2))
-			}
-		} else if (textCommand == "[pause]") {
-			pauseFor = 1.0
-		} else if (textCommand == "[longpause]") {
-			pauseFor = 5.0
-		} else if (textCommand == "[nextscene]") {
-			readyForNextScene = true
-		} else if (textCommand == "[center]") {
-			centerText = true
-		} else if (textCommand == "[skipindent]") {
-			skipIndent = true
-		} else if (textCommand.starts(with: "[stopmusic]")) {
-			if (self.gameLogic?.player != nil) {
-				self.gameLogic?.player?.stop()
-				self.gameLogic?.player = nil
-			}
-		} else if (textCommand.starts(with: "[fademusic]")) {
-			if (self.gameLogic?.fadePlayer != nil) {
-				self.gameLogic?.fadePlayer?.stop()
-			}
-			self.gameLogic?.fadePlayer = self.gameLogic?.player
-            if #available(iOS 10.0, *) {
-                self.gameLogic?.fadePlayer?.setVolume(0, fadeDuration: 3.0)
-            } else {
-                self.gameLogic?.fadePlayer?.volume = 0;
-            }
-			self.gameLogic?.player = nil
-		}
+        }
 	}
     
     func processText(line: TextLine) {
-        if (waitfornext) {
-            fixedText = ""
-            newText = skipIndent ? "" : "\t"
-        } else if (fixedText != "" && fixedText != "\t" && !skipIndent) {
-            newText += "\t"
+        if (line.languages.isEmpty || line.languages.contains(gameLogic!.languageCode())) {
+            if (waitfornext) {
+                fixedText = ""
+                newText = skipIndent ? "" : "\t"
+            } else if (fixedText != "" && fixedText != "\t" && !skipIndent) {
+                newText += "\t"
+            }
+            var nextLine = gameLogic!.localizedString(forKey: line.textString!, value: nil, table: self.gameLogic!.getChapterTable())
+            nextLine = self.gameLogic!.unwrapVariables(text: nextLine)
+            newText += nextLine
         }
-        var nextLine = gameLogic!.localizedString(forKey: line.textString!, value: nil, table: self.gameLogic!.getChapterTable())
-        nextLine = self.gameLogic!.unwrapVariables(text: nextLine)
-        newText += nextLine
     }
 	
 	func nextText() {
