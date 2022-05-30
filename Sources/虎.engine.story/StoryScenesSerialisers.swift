@@ -155,9 +155,13 @@ class StoryGameSceneSerialiser: BaseSceneSerialiser {
                         for parameterCombined in choiceParameterSplit {
                             if (!parameterCombined.starts(with: "Choice")) {
                                 let parameterSplit = parameterCombined.split(separator: ":")
-                                let parameter = String(parameterSplit[0]).trimmingCharacters(in: [" ", "-", ",", ":"])
-                                let value = String(parameterSplit[1]).trimmingCharacters(in: [" ", "-", ",", ":"])
-                                choiceParameters[parameter] = value
+                                if (parameterSplit.count == 2) {
+                                    let parameter = String(parameterSplit[0]).trimmingCharacters(in: [" ", "-", ",", ":"])
+                                    let value = String(parameterSplit[1]).trimmingCharacters(in: [" ", "-", ",", ":"])
+                                    choiceParameters[parameter] = value
+                                } else {
+                                    // Error
+                                }
                             }
                         }
                     }
