@@ -71,14 +71,16 @@ class StoryLogic: CutSceneLogic {
                 if let lineCharacter = textLine.character {
                     let speaker = gameLogic!.localizedString(forKey: lineCharacter, value: nil, table: "Story")
                     if (!characters.contains(where: { $0.speaker == speaker })) {
+                        var speakerAreaNode = shakeNode.childNode(withName: "//SpeakerArea") as? SKSpriteNode
+                        
                         let character = gameLogic?.story?.Characters.first(where: { $0.name == textLine.character })
                         if (character != nil) {
-                            var speakerAreaNode = shakeNode.childNode(withName: "//SpeakerArea") as? SKSpriteNode
-                            
                             if (character!.royal) {
                                 speakerAreaNode = shakeNode.childNode(withName: "//SpeakerAreaRoyal") as? SKSpriteNode
                             }
                             characters.append(CharacterLogic(gameLogic: gameLogic, shakeNode: shakeNode, startHidden: startHidden, isRoyalSpeaker: character!.royal, speaker: speaker, speakerImage: character!.model, imageRotation: 0.0, speakerAreaNode: speakerAreaNode, scale: scale, position: speakerImageNode!.position.y))
+                        } else {
+                            characters.append(CharacterLogic(gameLogic: gameLogic, shakeNode: shakeNode, startHidden: startHidden, isRoyalSpeaker: false, speaker: speaker, speakerImage: nil, imageRotation: 0.0, speakerAreaNode: speakerAreaNode, scale: scale, position: speakerImageNode!.position.y))
                         }
                     }
                 }

@@ -74,7 +74,7 @@ class CharacterLogic: GameSubScene {
         
         if (imageRotation != nil) {
             speakerImageNode?.zRotation = CGFloat((Double(imageRotation!) / 180.0) * Double.pi)
-            speakerImageNode?.position.y = self.frame.maxY - (speakerImageNode?.size.height)! / 2.0
+            speakerImageNode?.position.y = position / 2.0
         } else {
             speakerImageNode?.zRotation = 0.0
         }
