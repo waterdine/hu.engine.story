@@ -181,7 +181,7 @@ open class CutSceneLogic: GameScene {
 				currentSubScene = storyScene!
 				storyImage?.removeAllChildren()
                 let subScene = gameLogic?.loadEffectOverlay(scene: storyScene!) as? SKNode
-				subSceneNode = (subScene?.childNode(withName: "//Root"))!
+				subSceneNode = (subScene?.childNode(withName: "//Root")) ?? SKNode()
 				subScene?.removeAllChildren()
 				storyImage?.addChild(subSceneNode)
 			}
