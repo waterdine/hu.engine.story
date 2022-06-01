@@ -15,14 +15,16 @@ class CharacterLogic: GameSubScene {
     var originalSpeakerY: CGFloat = 0.0
     var speakerImageNode: SKSpriteNode? = nil
     var isRoyalSpeaker: Bool = false
+    var shortName: String = ""
     var speaker: String = ""
     var speakerImages: [String: SKTexture] = [:]
     var enableMouth: Bool = false
     
-    public init(gameLogic: GameLogic?, shakeNode: SKNode, startHidden: Bool, isRoyalSpeaker: Bool, speaker: String, speakerImage: String?, imageRotation: Float?, speakerAreaNode: SKSpriteNode?, scale: CGFloat, position: CGFloat) {
+    public init(gameLogic: GameLogic?, shakeNode: SKNode, startHidden: Bool, isRoyalSpeaker: Bool, speaker: String, shortName: String, speakerImage: String?, imageRotation: Float?, speakerAreaNode: SKSpriteNode?, scale: CGFloat, position: CGFloat) {
         super.init(gameLogic: gameLogic)
 
         self.speaker = speaker
+        self.shortName = shortName
         speakerImageNode = SKSpriteNode()
         self.addChild(speakerImageNode!)
         
