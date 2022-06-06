@@ -126,18 +126,24 @@ class StoryGameSceneSerialiser: BaseSceneSerialiser {
             let lineReference = scriptNumber + "_" + sceneNumber + "_" + lineString
             switch scene.Scene {
             case "Story":
-                var characterSpeech = text
-                var characterName = text.components(separatedBy: ":")
-                if (characterName.count > 1) {
-                    line.character = characterName[0]
-                    var startIndex: String.Index = characterSpeech.startIndex
-                    characterSpeech.formIndex(&startIndex, offsetBy: line.character!.count + 1)
-                    characterSpeech = characterSpeech[startIndex ..< characterSpeech.endIndex].trimmingCharacters(in: [" "])
-                }
                 if (!command) {
-                    strings[lineReference] = String(characterSpeech)
-                    line.textString = lineReference
+                    var characterSpeech = text
+                    let characterName = text.components(separatedBy: ":")
+                    if (characterName.count > 1) {
+                        line.character = characterName[0]
+                        var startIndex: String.Index = characterSpeech.startIndex
+                        characterSpeech.formIndex(&startIndex, offsetBy: line.character!.count + 1)
+                        characterSpeech = characterSpeech[startIndex ..< characterSpeech.endIndex].trimmingCharacters(in: [" "])
+                    }
+                    let characterCommand: Bool = characterSpeech.starts(with: "[")
+                    if (!characterCommand) {
+                        strings[lineReference] = String(characterSpeech)
+                        line.textString = lineReference
+                    } else {
+                        line.textString = characterSpeech
+                    }
                 }
+                
                 (scene as! StoryScene).Text.append(line)
                 break
             case "CutScene":

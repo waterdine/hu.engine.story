@@ -62,7 +62,7 @@ class StoryLogic: CutSceneLogic {
             if (isRoyalSpeaker) {
                 speakerAreaNode = shakeNode.childNode(withName: "//SpeakerAreaRoyal") as? SKSpriteNode
             }
-            character = CharacterLogic(gameLogic: gameLogic, shakeNode: shakeNode, startHidden: startHidden, isRoyalSpeaker: isRoyalSpeaker, speaker: speaker, shortName: (data as! StoryScene).Speaker!, speakerImage: speakerImage, imageRotation: imageRotation, speakerAreaNode: speakerAreaNode, scale: scale, position: speakerImageNode!.position.y)
+            character = CharacterLogic(gameLogic: gameLogic, shakeNode: shakeNode, startHidden: startHidden, isRoyalSpeaker: isRoyalSpeaker, speaker: speaker, shortName: (data as! StoryScene).Speaker!, speakerImage: speakerImage, imageRotation: imageRotation, speakerAreaNode: speakerAreaNode, scale: scale, position: -(self.scene!.frame.height / 2.0))
             characters.append(character!)
         }
         
@@ -78,9 +78,9 @@ class StoryLogic: CutSceneLogic {
                             if (character!.royal) {
                                 speakerAreaNode = shakeNode.childNode(withName: "//SpeakerAreaRoyal") as? SKSpriteNode
                             }
-                            characters.append(CharacterLogic(gameLogic: gameLogic, shakeNode: shakeNode, startHidden: startHidden, isRoyalSpeaker: character!.royal, speaker: speaker, shortName: lineCharacter, speakerImage: character!.model, imageRotation: 0.0, speakerAreaNode: speakerAreaNode, scale: scale, position: speakerImageNode!.position.y))
+                            characters.append(CharacterLogic(gameLogic: gameLogic, shakeNode: shakeNode, startHidden: true, isRoyalSpeaker: character!.royal, speaker: speaker, shortName: lineCharacter, speakerImage: character!.model, imageRotation: 0.0, speakerAreaNode: speakerAreaNode, scale: scale, position: -(self.scene!.frame.height / 2.0)))
                         } else {
-                            characters.append(CharacterLogic(gameLogic: gameLogic, shakeNode: shakeNode, startHidden: startHidden, isRoyalSpeaker: false, speaker: speaker, shortName: lineCharacter, speakerImage: nil, imageRotation: 0.0, speakerAreaNode: speakerAreaNode, scale: scale, position: speakerImageNode!.position.y))
+                            characters.append(CharacterLogic(gameLogic: gameLogic, shakeNode: shakeNode, startHidden: startHidden, isRoyalSpeaker: false, speaker: speaker, shortName: lineCharacter, speakerImage: nil, imageRotation: 0.0, speakerAreaNode: speakerAreaNode, scale: scale, position: -(self.scene!.frame.height / 2.0)))
                         }
                     }
                 }
@@ -127,7 +127,11 @@ class StoryLogic: CutSceneLogic {
     override func update(_ currentTime: TimeInterval) {
         super.update(currentTime)
         for character in characters {
-            character.update(currentTime, animatingText: animatingText, textSpeechPause: textSpeechPause)
+            if (character == self.character) {
+                character.update(currentTime, animatingText: animatingText || character != self.character, textSpeechPause: textSpeechPause || character != self.character)
+            } else {
+                character.update(currentTime, animatingText: false, textSpeechPause: true)
+            }
         }
     }
 	
@@ -142,6 +146,7 @@ class StoryLogic: CutSceneLogic {
         var currentCharacter = character
         if let lineCharacter = line.character {
             currentCharacter = characters.first(where: { $0.shortName == lineCharacter })
+            character = currentCharacter
         }
         
         if (currentCharacter != nil) {
@@ -156,6 +161,7 @@ class StoryLogic: CutSceneLogic {
                 speakerRoyalLabel.isHidden = true
                 speakerLabel.isHidden = false
             }
+            currentCharacter?.show()
         }
     }
     
