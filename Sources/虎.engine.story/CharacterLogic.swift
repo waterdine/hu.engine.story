@@ -19,6 +19,12 @@ class CharacterLogic: GameSubScene {
     var speaker: String = ""
     var speakerImages: [String: SKTexture] = [:]
     var enableMouth: Bool = false
+    var lastTime: Double = 0.0
+    
+    var currentOffset: CGSize = CGSize(width: 0.0, height: 0.0)
+    var wantedOffset: CGSize = CGSize(width: 0.0, height: 0.0)
+    var currentScale: Float = 1.0
+    var wantedScale: Float = 1.0
     
     public init(gameLogic: GameLogic?, shakeNode: SKNode, startHidden: Bool, isRoyalSpeaker: Bool, speaker: String, shortName: String, speakerImage: String?, imageRotation: Float?, speakerAreaNode: SKSpriteNode?, scale: CGFloat, position: CGFloat) {
         super.init(gameLogic: gameLogic)
@@ -82,6 +88,12 @@ class CharacterLogic: GameSubScene {
         }
         
         speakerImageNode?.isHidden = startHidden
+        
+        wantedScale = 1.0
+        currentScale = 1.0
+        
+        currentOffset = CGSize(width: 0.0, height: 0.0)
+        wantedOffset = currentOffset
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -89,6 +101,13 @@ class CharacterLogic: GameSubScene {
     }
     
     func update(_ currentTime: TimeInterval, animatingText: Bool, textSpeechPause: Bool) {
+        
+        var delta = currentTime - lastTime
+        if (lastTime == 0) {
+            delta = 0
+        }
+        lastTime = currentTime
+        
         if (enableMouth) {
             let mouthClosed = speakerImages["MouthClosed.png"]
             let mouthOpen = speakerImages["MouthOpen.png"]
@@ -108,6 +127,67 @@ class CharacterLogic: GameSubScene {
             if (speakerImageNode?.texture != newTexture) {
                 speakerImageNode?.texture = newTexture
             }
+        }
+        
+        if (wantedScale != currentScale) {
+            if (wantedScale < currentScale) {
+                currentScale -= Float(delta / 10.0)
+                if (currentScale < 0.0) {
+                    currentScale = wantedScale
+                }
+                if (currentScale < wantedScale) {
+                    currentScale = wantedScale
+                }
+            } else if (wantedScale > currentScale) {
+                currentScale += Float(delta / 10.0)
+                if (currentScale > 1.0) {
+                    currentScale = wantedScale
+                }
+                if (currentScale > wantedScale) {
+                    currentScale = wantedScale
+                }
+            }
+            speakerImageNode?.shader?.uniformNamed("u_scale")?.floatValue = currentScale
+        }
+        
+        if (wantedOffset != currentOffset) {
+            if (wantedOffset.width < currentOffset.width) {
+                currentOffset.width -= CGFloat(delta / 10.0)
+                if (currentOffset.width < 0.0) {
+                    currentOffset.width = wantedOffset.width
+                }
+                if (currentOffset.width < wantedOffset.width) {
+                    currentOffset.width = wantedOffset.width
+                }
+            } else if (wantedOffset.width > currentOffset.width) {
+                currentOffset.width += CGFloat(delta / 10.0)
+                if (currentOffset.width > 1.0) {
+                    currentOffset.width = wantedOffset.width
+                }
+                if (currentOffset.width > wantedOffset.width) {
+                    currentOffset.width = wantedOffset.width
+                }
+            }
+            
+            if (wantedOffset.height < currentOffset.height) {
+                currentOffset.height -= CGFloat(delta / 10.0)
+                if (currentOffset.height < 0.0) {
+                    currentOffset.height = wantedOffset.height
+                }
+                if (currentOffset.height < wantedOffset.height) {
+                    currentOffset.height = wantedOffset.height
+                }
+            } else if (wantedOffset.height > currentOffset.height) {
+                currentOffset.height += CGFloat(delta / 10.0)
+                if (currentOffset.height > 1.0) {
+                    currentOffset.height = wantedOffset.height
+                }
+                if (currentOffset.height > wantedOffset.height) {
+                    currentOffset.height = wantedOffset.height
+                }
+            }
+            speakerImageNode?.shader?.uniformNamed("u_offset_x")?.floatValue = Float(currentOffset.width)
+            speakerImageNode?.shader?.uniformNamed("u_offset_y")?.floatValue = Float(currentOffset.height)
         }
     }
     
@@ -133,6 +213,24 @@ class CharacterLogic: GameSubScene {
             speakerImageNode?.isHidden = false*/
         } else if (command.textString == "[fadeout]") {
             speakerImageNode?.run(SKAction.fadeOut(withDuration: 0.7))
+        } else if (command.textString?.starts(with: "[pos:") ?? false) {
+            var pos = command.textString?.replacingOccurrences(of: "[pos:", with: "") ?? "0.0,0.0"
+            pos = pos.trimmingCharacters(in: ["]"])
+            let parts: [Substring] = pos.split(separator: ",")
+            if (parts.count == 1) {
+                let offset = Float.init(parts[0])
+                wantedOffset.width = CGFloat(offset!)
+                wantedOffset.height = CGFloat(offset!)
+            } else if (parts.count == 2) {
+                let offsetX = Float.init(parts[0])
+                let offsetY = Float.init(parts[1])
+                wantedOffset.width = CGFloat(offsetX!)
+                wantedOffset.height = CGFloat(offsetY!)
+            }
+        } else if (command.textString?.starts(with: "[scale:") ?? false) {
+            var scale = command.textString?.replacingOccurrences(of: "[scale:", with: "") ?? "1.0"
+            scale = scale.trimmingCharacters(in: ["]"])
+            wantedScale = Float.init(scale)!
         }
     }
 }

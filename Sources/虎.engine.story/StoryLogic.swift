@@ -183,6 +183,10 @@ class StoryLogic: CutSceneLogic {
 		} else if (command.textString == "[enterright]") {
 		} else if (command.textString == "[fadeout]") {
 			textNode?.run(SKAction.fadeOut(withDuration: 0.7))
-		}
+        } else if (command.textString == "[shake]") {
+            textNode?.run(SKAction.sequence([SKAction.moveBy(x: 10, y: 0, duration: 0.1), SKAction.moveBy(x: -20, y: 0, duration: 0.1),SKAction.moveBy(x: 10, y: 0, duration: 0.1)]))
+        } else if (command.textString == "[bounce]") {
+            textNode?.run(SKAction.sequence([SKAction.moveBy(x: 0, y: 10, duration: 0.1), SKAction.moveBy(x: 0, y: -20, duration: 0.1),SKAction.moveBy(x: 0, y: 10, duration: 0.1)]))
+        }
 	}
 }
