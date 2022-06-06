@@ -22,7 +22,12 @@ let package = Package(
             name: "虎.engine.story",
             dependencies: [.product(name: "虎.engine.base", package: "hu.engine.base")],
             resources: [
-                .copy("Resources/Scenes")
+                .copy("Resources/Scenes"),
+                .process("Resources/Materials/FlagRipple.fsh"),
+                .process("Resources/Materials/OffsetScale.fsh"),
+                .process("Resources/Materials/PaperFilter.fsh"),
+                .process("Resources/Materials/PaperFilterOffsetScale.fsh"),
+                .process("Resources/Materials/Wave.fsh")
             ]),
         .testTarget(
             name: "虎.engine.story.tests",

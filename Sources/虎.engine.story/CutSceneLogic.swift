@@ -110,11 +110,11 @@ open class CutSceneLogic: GameScene {
 		centerText = false
 		pauseFor = 0.0
 		
-        var imageMaskUrl = gameLogic?.loadUrl(forResource: "Default.ImageMask", withExtension: ".png", subdirectory: "Images")
+        var imageMaskUrl = gameLogic?.loadUrl(forResource: "Default.ImageMask", withExtension: ".png", subdirectory: "Images/Interface")
 		if (imageMaskUrl != nil) {
             maskTexture1 = SKTexture(imageNamed: imageMaskUrl!.path)
 		}
-        imageMaskUrl = gameLogic?.loadUrl(forResource: "Default.ImageMask3", withExtension: ".png", subdirectory: "Images")
+        imageMaskUrl = gameLogic?.loadUrl(forResource: "Default.ImageMask3", withExtension: ".png", subdirectory: "Images/Interface")
 		if (imageMaskUrl != nil) {
 			maskTexture2 = SKTexture(imageNamed: imageMaskUrl!.path)
 		}
