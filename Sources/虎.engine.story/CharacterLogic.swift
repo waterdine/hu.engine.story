@@ -23,18 +23,20 @@ class CharacterLogic: GameSubScene {
     var lastTime: Double = 0.0
     
     var baseScale: Float = 1.0
+    var basePositionScale : Float = 1.0
     var basePosition: Float = 0.0
     var currentOffset: CGSize = CGSize(width: 0.0, height: 0.0)
     var wantedOffset: CGSize = CGSize(width: 0.0, height: 0.0)
     var currentScale: Float = 1.0
     var wantedScale: Float = 1.0
     
-    public init(gameLogic: GameLogic?, shakeNode: SKNode, startHidden: Bool, isRoyalSpeaker: Bool, speaker: String, shortName: String, speakerImage: String?, imageRotation: Float?, speakerAreaNode: SKSpriteNode?, scale: CGFloat, position: CGFloat) {
+    public init(gameLogic: GameLogic?, shakeNode: SKNode, startHidden: Bool, isRoyalSpeaker: Bool, speaker: String, shortName: String, speakerImage: String?, imageRotation: Float?, speakerAreaNode: SKSpriteNode?, scale: CGFloat, positionScale: CGFloat, position: CGFloat) {
         super.init(gameLogic: gameLogic)
 
         self.speaker = speaker
         self.baseScale = Float(scale)
         self.basePosition = Float(position)
+        self.basePositionScale = Float(positionScale)
         self.shortName = shortName
         speakerShadowGroupNode = SKNode()
         speakerImageNode = SKSpriteNode()
@@ -148,7 +150,7 @@ class CharacterLogic: GameSubScene {
             }
         }
         
-        if (wantedScale != currentScale) {
+        /*if (wantedScale != currentScale) {
             if (wantedScale < currentScale) {
                 currentScale -= Float(delta / 10.0)
                 if (currentScale < 0.0) {
@@ -206,8 +208,8 @@ class CharacterLogic: GameSubScene {
                 }
             }
             speakerImageNode?.position.x = currentOffset.width
-            speakerImageNode?.position.y = currentOffset.height
-        }
+            speakerImageNode?.position.y = currentOffset.height + CGFloat(basePosition)
+        }*/
     }
     
     func processTextCommand(command: TextLine, speakerAreaNode: SKSpriteNode) {
@@ -232,6 +234,8 @@ class CharacterLogic: GameSubScene {
             speakerImageNode?.isHidden = false*/
         } else if (command.textString == "[fadeout]") {
             speakerShadowGroupNode?.run(SKAction.fadeOut(withDuration: 0.7))
+        } else if (command.textString == "[hide]") {
+            speakerShadowGroupNode?.run(SKAction.hide())
         } else if (command.textString?.starts(with: "[pos:") ?? false) {
             var pos = command.textString?.replacingOccurrences(of: "[pos:", with: "") ?? "0.0,0.0"
             pos = pos.trimmingCharacters(in: ["]"])
@@ -248,15 +252,15 @@ class CharacterLogic: GameSubScene {
             }
             if (true) { //speakerImageNode?.isHidden ?? false) {
                 currentOffset = wantedOffset
-                speakerShadowGroupNode?.position.x = currentOffset.width
-                speakerShadowGroupNode?.position.y = currentOffset.height + CGFloat(basePosition)
+                speakerShadowGroupNode?.position.x = currentOffset.width * CGFloat(basePositionScale)
+                speakerShadowGroupNode?.position.y = (currentOffset.height * CGFloat(basePositionScale)) + CGFloat(basePosition)
                 show()
             }
         } else if (command.textString?.starts(with: "[scale:") ?? false) {
             var scale = command.textString?.replacingOccurrences(of: "[scale:", with: "")  ?? "1.0"
             scale = scale.trimmingCharacters(in: ["]"])
             wantedScale = Float.init(scale) ?? 1.0
-            if (speakerImageNode?.isHidden ?? false) {
+            if (true) { //speakerImageNode?.isHidden ?? false) {
                 currentScale = wantedScale
                 speakerShadowGroupNode?.setScale(CGFloat(baseScale) * CGFloat(wantedScale))
                 show()

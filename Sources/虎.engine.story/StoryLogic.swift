@@ -11,7 +11,8 @@ import 虎_engine_base
 @available(OSX 10.13, *)
 @available(iOS 9.0, *)
 class StoryLogic: CutSceneLogic {
-
+    
+    let characterNodes = SKNode()
     var character: CharacterLogic? = nil
     var characters: [CharacterLogic] = []
 	
@@ -39,6 +40,8 @@ class StoryLogic: CutSceneLogic {
         let speakerImageNode = shakeNode.childNode(withName: "//SpeakerImage") as? SKSpriteNode
         speakerImageNode?.texture = nil
         let scale = (speakerImageNode?.userData!["scale"] as! CGFloat)
+        let storyImageNode = self.childNode(withName: "//StoryImage")
+        let positionScale = storyImageNode?.xScale ?? 1.0
         
         let speakerRoyalLabel = shakeNode.childNode(withName: "//SpeakerRoyal") as! SKLabelNode
         let speakerLabel = shakeNode.childNode(withName: "//Speaker") as! SKLabelNode
@@ -47,6 +50,7 @@ class StoryLogic: CutSceneLogic {
         speakerRoyalLabel.isHidden = true
         speakerLabel.fontName = font
         speakerLabel.isHidden = true
+        
         
         characters = []
         if ((data as! StoryScene).Speaker != nil && !(data as! StoryScene).Speaker!.isEmpty) {
@@ -62,7 +66,7 @@ class StoryLogic: CutSceneLogic {
             if (isRoyalSpeaker) {
                 speakerAreaNode = shakeNode.childNode(withName: "//SpeakerAreaRoyal") as? SKSpriteNode
             }
-            character = CharacterLogic(gameLogic: gameLogic, shakeNode: shakeNode, startHidden: startHidden, isRoyalSpeaker: isRoyalSpeaker, speaker: speaker, shortName: (data as! StoryScene).Speaker!, speakerImage: speakerImage, imageRotation: imageRotation, speakerAreaNode: speakerAreaNode, scale: scale, position: -(self.scene!.frame.height / 2.0))
+            character = CharacterLogic(gameLogic: gameLogic, shakeNode: shakeNode, startHidden: startHidden, isRoyalSpeaker: isRoyalSpeaker, speaker: speaker, shortName: (data as! StoryScene).Speaker!, speakerImage: speakerImage, imageRotation: imageRotation, speakerAreaNode: speakerAreaNode, scale: scale, positionScale: positionScale, position: -(self.scene!.frame.height / 2.0))
             characters.append(character!)
         }
         
@@ -78,21 +82,27 @@ class StoryLogic: CutSceneLogic {
                             if (character!.royal) {
                                 speakerAreaNode = shakeNode.childNode(withName: "//SpeakerAreaRoyal") as? SKSpriteNode
                             }
-                            characters.append(CharacterLogic(gameLogic: gameLogic, shakeNode: shakeNode, startHidden: true, isRoyalSpeaker: character!.royal, speaker: speaker, shortName: lineCharacter, speakerImage: character!.model, imageRotation: 0.0, speakerAreaNode: speakerAreaNode, scale: scale, position: -(self.scene!.frame.height / 2.0)))
+                            characters.append(CharacterLogic(gameLogic: gameLogic, shakeNode: shakeNode, startHidden: true, isRoyalSpeaker: character!.royal, speaker: speaker, shortName: lineCharacter, speakerImage: character!.model, imageRotation: 0.0, speakerAreaNode: speakerAreaNode, scale: scale, positionScale: positionScale, position: -(self.scene!.frame.height / 2.0)))
                         } else {
-                            characters.append(CharacterLogic(gameLogic: gameLogic, shakeNode: shakeNode, startHidden: startHidden, isRoyalSpeaker: false, speaker: speaker, shortName: lineCharacter, speakerImage: nil, imageRotation: 0.0, speakerAreaNode: speakerAreaNode, scale: scale, position: -(self.scene!.frame.height / 2.0)))
+                            characters.append(CharacterLogic(gameLogic: gameLogic, shakeNode: shakeNode, startHidden: startHidden, isRoyalSpeaker: false, speaker: speaker, shortName: lineCharacter, speakerImage: nil, imageRotation: 0.0, speakerAreaNode: speakerAreaNode, scale: scale, positionScale: positionScale, position: -(self.scene!.frame.height / 2.0)))
                         }
                     }
                 }
             }
         }
         
-        speakerImageNode!.removeAllChildren()
+        characterNodes.removeAllChildren()
         for character in characters {
-            speakerImageNode!.addChild(character)
+            characterNodes.addChild(character)
         }
-			
-		let storyImageNode = self.childNode(withName: "//StoryImage")
+        
+        if (shakeNode.childNode(withName: "//CharacterNodes") == nil) {
+            characterNodes.name = "CharacterNodes"
+            characterNodes.position.x = 0
+            characterNodes.position.y = 0
+            shakeNode.addChild(characterNodes)
+        }
+        
 		let disableOffset = storyImageNode?.userData?["disableOffset"] as? Bool
 		if (disableOffset == nil || disableOffset! == false) {
             let imageOffset = (data as! StoryScene).Offset
