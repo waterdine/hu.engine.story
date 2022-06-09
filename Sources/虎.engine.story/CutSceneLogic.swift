@@ -92,7 +92,7 @@ open class CutSceneLogic: GameScene {
         centerTextLabel?.fontName = gameLogic!.localizedString(forKey: "FontName", value: nil, table: "Story")
 		fixedText = ""
 		newText = ""
-        if #available(iOS 11.0, *) {
+        if #available(iOS 11.0, tvOS 11.0, *) {
             textLabel?.attributedText = NSAttributedString()
             coverTextLabel?.attributedText = NSAttributedString()
         } else {
@@ -433,7 +433,7 @@ open class CutSceneLogic: GameScene {
 				textLabel?.isHidden = true
 				coverTextLabel?.isHidden = true
 				centerTextLabel?.isHidden = false
-                if #available(iOS 11.0, *) {
+                if #available(iOS 11.0, tvOS 11.0, *) {
                     centerTextLabel?.attributedText = string
                 } else {
                     // Fallback on earlier versions
@@ -442,7 +442,7 @@ open class CutSceneLogic: GameScene {
 				centerTextLabel?.isHidden = true
 				textLabel?.isHidden = false
 				coverTextLabel?.isHidden = false
-                if #available(iOS 11.0, *) {
+                if #available(iOS 11.0, tvOS 11.0, *) {
                     coverTextLabel?.attributedText = coverString
                     textLabel?.attributedText = string
                 } else {
@@ -755,7 +755,7 @@ open class CutSceneLogic: GameScene {
                     self.gameLogic?.fadePlayer?.stop()
                 }
                 self.gameLogic?.fadePlayer = self.gameLogic?.player
-                if #available(iOS 10.0, *) {
+                if #available(iOS 10.0, tvOS 10.0, *) {
                     self.gameLogic?.fadePlayer?.setVolume(0, fadeDuration: 3.0)
                 } else {
                     self.gameLogic?.fadePlayer?.volume = 0;
