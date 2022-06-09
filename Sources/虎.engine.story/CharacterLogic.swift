@@ -123,11 +123,11 @@ class CharacterLogic: GameSubScene {
 
     func update(_ currentTime: TimeInterval, animatingText: Bool, textSpeechPause: Bool) {
         
-        var delta = currentTime - lastTime
+        /*var delta = currentTime - lastTime
         if (lastTime == 0) {
             delta = 0
         }
-        lastTime = currentTime
+        lastTime = currentTime*/
         
         if (enableMouth) {
             let mouthClosed = speakerImages["MouthClosed.png"]
