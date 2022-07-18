@@ -51,7 +51,6 @@ class StoryLogic: CutSceneLogic {
         speakerLabel.fontName = font
         speakerLabel.isHidden = true
         
-        
         characters = []
         if ((data as! StoryScene).Speaker != nil && !(data as! StoryScene).Speaker!.isEmpty) {
             let speaker = gameLogic!.localizedString(forKey: (data as! StoryScene).Speaker!, value: nil, table: "Story")
@@ -162,14 +161,20 @@ class StoryLogic: CutSceneLogic {
         if (currentCharacter != nil) {
             let speakerRoyalLabel = shakeNode.childNode(withName: "//SpeakerRoyal") as! SKLabelNode
             let speakerLabel = shakeNode.childNode(withName: "//Speaker") as! SKLabelNode
+            let speakerAreaRoyal = shakeNode.childNode(withName: "//SpeakerAreaRoyal") as! SKSpriteNode
+            let speakerArea = shakeNode.childNode(withName: "//SpeakerArea") as! SKSpriteNode
             if (currentCharacter!.isRoyalSpeaker) {
                 speakerRoyalLabel.text = currentCharacter?.speaker
                 speakerRoyalLabel.isHidden = false
                 speakerLabel.isHidden = true
+                speakerAreaRoyal.isHidden = false
+                speakerArea.isHidden = true
             } else {
                 speakerLabel.text = currentCharacter?.speaker
                 speakerRoyalLabel.isHidden = true
                 speakerLabel.isHidden = false
+                speakerAreaRoyal.isHidden = true
+                speakerArea.isHidden = false
             }
             currentCharacter?.show()
         }
